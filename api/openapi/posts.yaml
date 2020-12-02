@@ -1,0 +1,59 @@
+swagger: "2.0"
+info:
+  title: Posts API
+  description: Fetch user's posts
+  version: "1.0.0"
+paths:
+  /posts:
+    get:
+      description: List posts
+      parameters:
+        - name: postId
+          in: query
+          type: number
+          required: false
+          description: Post id
+      responses:
+        200:
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Post"
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+  /posts/{postId}:
+    get:
+      description: Get post by id
+      parameters:
+        - name: postId
+          in: path
+          type: number
+          required: true
+          description: Post id
+      responses:
+        200:
+          schema:
+            $ref: "#/definitions/Post"
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+
+definitions:
+  Post:
+    required:
+      - id
+      - userId
+      - title
+      - body
+    properties:
+      id:
+        type: number
+      userId:
+        type: number
+      title:
+        type: string
+      body:
+        type: string
