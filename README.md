@@ -1,4 +1,5 @@
-# Blog API
+# Proza API
+Api for open-source blog.
 
 ## Folder Structure
 ```
