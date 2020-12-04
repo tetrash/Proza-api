@@ -105,3 +105,6 @@ dist
 
 # build folder
 dist
+
+# junit report
+junit.xml
