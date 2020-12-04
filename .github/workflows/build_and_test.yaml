@@ -38,13 +38,13 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v2
         with:
-          name: Test coverage (Python ${{ matrix.python-version }})
+          name: test-coverage
           path: coverage
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: Test results (Node ${{ matrix.node-version }})
+          name: test-results
           path: junit.xml
 
   build:
@@ -94,14 +94,15 @@ jobs:
 
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v1.6
+        if: failure()
         with:
           check_name: Unit test results
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          files: junit.xml
+          files: test-results/junit.xml
 
       - name: Publish test coverage
         uses: codecov/codecov-action@v1
         if: success()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./coverage/
+          directory: test-coverage/coverage/
