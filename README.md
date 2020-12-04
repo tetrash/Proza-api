@@ -1,4 +1,5 @@
 # Blog API
+[![codecov](https://codecov.io/gh/tetrash/Proza-api/branch/main/graph/badge.svg?token=LBE4LJQDYN)](https://codecov.io/gh/tetrash/Proza-api)
 
 ## Folder Structure
 ```
