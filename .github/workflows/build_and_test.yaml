@@ -1,0 +1,105 @@
+name: Build and test
+
+on: [pull_request]
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 12.x ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.yarn
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Run linter test
+        run: yarn run lint
+      - name: Run tests
+        run: yarn test --ci --coverage --reporters=jest-junit
+      - name: Upload test coverage
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Test coverage (Python ${{ matrix.python-version }})
+          path: coverage
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: Test results (Node ${{ matrix.node-version }})
+          path: junit.xml
+
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 12.x ]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.yarn
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: yarn build
+      - name: Upload build
+        uses: actions/upload-artifact@master
+        with:
+          name: build
+          path: ./dist
+
+  publish-test-results:
+    name: Publish tests results
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v1.6
+        with:
+          check_name: Unit test results
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: junit.xml
+
+      - name: Publish test coverage
+        uses: codecov/codecov-action@v1
+        if: success()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage/

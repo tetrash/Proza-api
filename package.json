@@ -8,8 +8,7 @@
   "private": true,
   "scripts": {
     "start:dev": "LOG_LEVEL=debug ts-node-dev --respawn src/index.ts",
-    "test": "jest --testPathPattern=src/",
-    "test:integration": "ENV=test jest --testPathPattern=test/",
+    "test": "jest",
     "build": "tsc",
     "lint": "eslint",
     "cleanup": "rm -rf ./dist ./node_modules"
