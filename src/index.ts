@@ -4,11 +4,12 @@ import { validateOrReject } from 'class-validator';
 import { GraphqlServer } from './common/clients/graphql';
 import { connect } from 'mongoose';
 import { IResolvers } from 'apollo-server-express';
+import { postsResolver } from './posts/ports/graphql';
 
 const config = new Config();
 const winstonLogger = new WinstonLogger(config.logLevel);
 
-const resolvers: IResolvers[] = [];
+const resolvers: IResolvers[] = [postsResolver];
 
 async function init() {
   await validateOrReject(config);
