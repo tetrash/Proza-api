@@ -1,7 +1,7 @@
 import { MongodbAdapter } from './mongodb.adapter';
 import { PostEntity } from '../entities/post.entity';
 import { getModelForClass } from '@typegoose/typegoose';
-import { InternalError, NotFoundError } from '../../common/errors/errors';
+import { NotFoundError } from '../../common/errors/errors';
 import { PaginateResult } from 'mongoose';
 import { newPost, Post } from '../domain/post';
 
@@ -33,7 +33,7 @@ describe('posts mongodb adapter', () => {
       jest.spyOn(postModel, 'findById').mockImplementation(() => {
         throw new Error();
       });
-      await expect(adapter.getPost('')).rejects.toThrow(InternalError);
+      await expect(adapter.getPost('')).rejects.toThrow();
     });
 
     it('should throw NotFoundError if no posts found', async () => {
