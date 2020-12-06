@@ -1,0 +1,32 @@
+type Post {
+  id: ID!
+  owner: String
+  title: String!
+  body: String!
+  updatedAt: String!
+  createdAt: String!
+}
+
+type PostListResult {
+  nextToken: String
+  items: [Post]
+}
+
+input PostListPagination {
+  limit: Int
+  nextToken: String
+}
+
+input createPost {
+  title: String!
+  body: String
+}
+
+type Query {
+  listPosts(paginate: PostListPagination): PostListResult
+  getPost(postId: String): Post
+}
+
+type Mutation {
+  createPost(post: createPost!): Post
+}
