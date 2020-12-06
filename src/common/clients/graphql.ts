@@ -1,12 +1,11 @@
-import * as express from 'express';
+import express from 'express';
 import { ApolloServer, IResolvers } from 'apollo-server-express';
 import { addResolversToSchema, GraphQLFileLoader, loadSchemaSync, mergeResolvers } from 'graphql-tools';
 import { Config } from '../config/config';
 import { Logger } from '../logger/logger';
-import * as cors from 'cors';
-import * as helmet from 'helmet';
+import cors from 'cors';
+import helmet from 'helmet';
 import * as bodyParser from 'body-parser';
-import { v4 } from 'uuid';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -18,9 +17,9 @@ declare global {
 }
 
 export interface ApolloContext {
-  userId: string;
-  userEmail: string;
-  username: string;
+  userId?: string;
+  userEmail?: string;
+  username?: string;
 }
 
 export class GraphqlServer {
@@ -39,10 +38,16 @@ export class GraphqlServer {
       playground: this.config.graphqlPlayground,
       introspection: this.config.graphqlPlayground,
       context: (context): ApolloContext => {
+        const userIdHeader = context.req.headers['x-forwarded-user'];
+        const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
+        const userEmailHeader = context.req.headers['x-forwarded-email'];
+        const userEmail = Array.isArray(userEmailHeader) ? userEmailHeader[0] : userEmailHeader;
+        const usernameHeader = context.req.headers['x-forwarded-preferred-username'];
+        const username = Array.isArray(usernameHeader) ? usernameHeader[0] : usernameHeader;
         return {
-          userId: context.req.headers['x-forwarded-user'],
-          userEmail: context.req.headers['x-forwarded-email'],
-          username: context.req.headers['x-forwarded-preferred-username'],
+          userId,
+          userEmail,
+          username,
         };
       },
     });
@@ -58,10 +63,6 @@ export class GraphqlServer {
     this.app.use(cors());
     this.app.use(helmet({ contentSecurityPolicy: this.config.env === 'dev' ? false : undefined }));
     this.app.use(bodyParser.json());
-    this.app.use((req, res, next) => {
-      req.id = v4();
-      next();
-    });
 
     this.gqlServer.applyMiddleware({ app: this.app });
 

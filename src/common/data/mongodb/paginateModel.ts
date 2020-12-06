@@ -1,5 +1,5 @@
 import { plugin } from '@typegoose/typegoose';
-import * as mongoosePaginate from 'mongoose-paginate-v2';
+import mongoosePaginate from 'mongoose-paginate-v2';
 import { FilterQuery, PaginateOptions, PaginateResult } from 'mongoose';
 
 export type PaginateMethod<T> = (
