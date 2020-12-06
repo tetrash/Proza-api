@@ -1,24 +1,29 @@
 import { WinstonLogger } from './common/logger/winstonLogger';
-import { HttpServer } from './common/server/http';
 import { Config } from './common/config/config';
 import { validateOrReject } from 'class-validator';
-import { postsRouter } from './posts/ports/http';
+import { GraphqlServer } from './common/clients/graphql';
+import { connect } from 'mongoose';
+import { IResolvers } from 'apollo-server-express';
 
 const config = new Config();
 const winstonLogger = new WinstonLogger(config.logLevel);
 
+const resolvers: IResolvers[] = [];
+
 async function init() {
   await validateOrReject(config);
+  await connect(config.mongodbConfig.url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: config.mongodbConfig.dbName,
+    user: config.mongodbConfig.user,
+    pass: config.mongodbConfig.password,
+    autoCreate: true,
+  });
 
-  const httpServer = new HttpServer(winstonLogger, config.port);
+  const graphqlServer = new GraphqlServer(config, winstonLogger, resolvers);
 
-  httpServer.setupCors();
-  httpServer.loadMiddlewares();
-  if (config.env === 'dev') {
-    httpServer.setupDocs('./api/openapi');
-  }
-  httpServer.loadRoutes([{ prefix: 'posts', router: postsRouter }]);
-  httpServer.start();
+  await graphqlServer.start();
 }
 
 init().catch((err) => {
