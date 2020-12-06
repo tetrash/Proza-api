@@ -3,7 +3,7 @@ import { DocumentType, getModelForClass } from '@typegoose/typegoose';
 import { PostEntity, PostEntityMapper } from '../entities/post.entity';
 import { DomainPaginationResult } from '../../common/interfaces/domainPaginationResult';
 import { PaginateResult } from 'mongoose';
-import { InternalError, NotFoundError } from '../../common/errors/errors';
+import { NotFoundError } from '../../common/errors/errors';
 import { v4 } from 'uuid';
 
 export class MongodbAdapter implements PostRepository {
@@ -12,12 +12,7 @@ export class MongodbAdapter implements PostRepository {
   constructor(private readonly PostModel = getModelForClass(PostEntity)) {}
 
   async getPost(postId: string): Promise<Post> {
-    let result: DocumentType<PostEntity> | null = null;
-    try {
-      result = await this.PostModel.findById(postId);
-    } catch (e) {
-      throw new InternalError(e.message);
-    }
+    const result: DocumentType<PostEntity> | null = await this.PostModel.findById(postId);
 
     if (!result) {
       throw new NotFoundError('Post not found');
