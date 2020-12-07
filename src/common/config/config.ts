@@ -1,4 +1,4 @@
-import { IsBoolean, IsIn, IsInt, IsString, ValidateNested } from 'class-validator';
+import { IsBoolean, IsIn, IsInt, ValidateNested } from 'class-validator';
 import { MongodbConfig } from './mongodbConfig';
 
 export class Config {
@@ -15,12 +15,8 @@ export class Config {
   @IsIn(['dev', 'prod', 'test'])
   env: string = process.env.ENV || 'dev';
 
-  @IsString()
-  graphqlSchemaPath: string = process.env.GRAPHQL_SCHEMA_PATH || 'api/graphql/**/*.graphql';
-
   @IsBoolean()
-  graphqlPlayground: boolean =
-    process.env.GRAPHQL_PLAYGROUND === 'true' || process.env.GRAPHQL_PLAYGROUND === '1' || this.env === 'dev';
+  isDevEnv: boolean = this.env === 'dev';
 
   @ValidateNested()
   mongodbConfig: MongodbConfig = new MongodbConfig();
