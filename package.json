@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start:dev": "LOG_LEVEL=debug ts-node-dev --respawn src/index.ts",
+    "start:dev": "ENV=dev LOG_LEVEL=debug ts-node-dev --watch src,api src/index.ts",
     "test": "jest",
     "build": "tsc",
     "lint": "eslint",

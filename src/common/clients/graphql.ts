@@ -28,15 +28,16 @@ export class GraphqlServer {
 
   constructor(private readonly config: Config, private readonly logger: Logger, resolvers: IResolvers[]) {
     const schema = addResolversToSchema({
-      schema: this.loadGraphqlSchemas(this.config.graphqlSchemaPath),
+      schema: this.loadGraphqlSchemas('api/graphql/**/*.graphql'),
       resolvers: mergeResolvers(resolvers),
     });
 
     this.gqlServer = new ApolloServer({
       schema,
       logger: this.logger,
-      playground: this.config.graphqlPlayground,
-      introspection: this.config.graphqlPlayground,
+      playground: this.config.isDevEnv,
+      introspection: this.config.isDevEnv,
+      debug: this.config.isDevEnv,
       context: (context): ApolloContext => {
         const userIdHeader = context.req.headers['x-forwarded-user'];
         const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
