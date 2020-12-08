@@ -29,7 +29,7 @@ export class PostEntity extends PaginatedModel {
 }
 
 export class PostEntityMapper implements DataMapper<Post, PostEntity> {
-  toDomain(entity: DocumentType<PostEntity>): Post {
+  toDomain(entity: DocumentType<PostEntity> | PostEntity): Post {
     return {
       id: entity._id || '',
       owner: entity.owner || '',

@@ -1,4 +1,5 @@
 import { DomainPaginationResult } from '../../common/interfaces/domainPaginationResult';
+import { IncorrectInputError } from '../../common/errors/errors';
 
 export interface Post {
   id: string;
@@ -10,8 +11,12 @@ export interface Post {
 }
 
 export function newPost(payload: Partial<Post>): Post {
+  if (!payload.id && typeof payload.id !== 'string') {
+    throw new IncorrectInputError('User is missing id field');
+  }
+
   return {
-    id: payload.id || '',
+    id: payload.id,
     owner: payload.owner || 'Unknown',
     title: payload.title || 'Title',
     body: payload.body || '',

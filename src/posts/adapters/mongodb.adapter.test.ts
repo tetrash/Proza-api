@@ -56,13 +56,13 @@ describe('posts mongodb adapter', () => {
         hasPrevPage: false,
       };
 
-      jest.spyOn(postModel, 'paginate').mockReturnValue(Promise.resolve(result));
+      jest.spyOn(postModel, 'paginate').mockResolvedValue(result);
       await expect(adapter.listPosts(1, '1')).resolves.toHaveProperty('items');
       expect((await adapter.listPosts(1)).items).toHaveLength(1);
     });
 
     it('should return empty array', async () => {
-      jest.spyOn(postModel, 'paginate').mockReturnValue(Promise.resolve(null as any));
+      jest.spyOn(postModel, 'paginate').mockResolvedValue(null as any);
       await expect(adapter.listPosts(1)).resolves.toHaveProperty('items');
       expect((await adapter.listPosts(1)).items).toHaveLength(0);
     });
@@ -70,9 +70,9 @@ describe('posts mongodb adapter', () => {
 
   describe('createPost', () => {
     it('should create post', async () => {
-      const payload: Post = newPost({});
+      const payload: Post = newPost({ id: 'id' });
 
-      jest.spyOn(postModel, 'create').mockReturnValue(Promise.resolve(undefined) as any);
+      jest.spyOn(postModel, 'create').mockResolvedValue(undefined as any);
       await expect(adapter.createPost(payload)).resolves.not.toThrow();
       const { id, ...result } = payload;
       expect(postModel.create).toHaveBeenCalledWith({ ...result, _id: id });
