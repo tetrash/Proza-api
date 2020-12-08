@@ -1,12 +1,10 @@
-import { Post } from './domain/post';
+import { Post, PostRepository } from './domain/post';
 import { PostsService } from './posts.service';
-import Mock = jest.Mock;
-import { MongodbAdapter } from './adapters/mongodb.adapter';
-
-jest.mock('./adapters/mongodb.adapter');
+import { mock } from 'jest-mock-extended';
+import { DomainPaginationResult } from '../common/interfaces/domainPaginationResult';
 
 describe('posts service', () => {
-  const postsRepo = new MongodbAdapter();
+  const postsRepo = mock<PostRepository>();
   const service = new PostsService(postsRepo);
 
   const post: Post = {
@@ -25,7 +23,7 @@ describe('posts service', () => {
   describe('getPost', () => {
     it('should return post', async () => {
       const expected: Post = post;
-      (postsRepo.getPost as Mock).mockImplementationOnce(() => expected);
+      postsRepo.getPost.mockResolvedValue(expected);
       const result = service.getPost({ postId: '1' });
       await expect(result).resolves.toEqual(expected);
     });
@@ -33,8 +31,11 @@ describe('posts service', () => {
 
   describe('listPosts', () => {
     it('should return list of posts', async () => {
-      const expected = [post];
-      (postsRepo.listPosts as Mock).mockImplementationOnce(() => expected);
+      const expected: DomainPaginationResult<Post> = {
+        items: [post],
+        nextToken: '',
+      };
+      postsRepo.listPosts.mockResolvedValue(expected);
       const result = service.listPosts({ limit: 2 });
       await expect(result).resolves.toEqual(expected);
     });
@@ -43,8 +44,8 @@ describe('posts service', () => {
   describe('createPost', () => {
     it('should return post', async () => {
       const payload = { title: 'test', body: 'test', owner: 'test' };
-      const expected: Post = { ...post, ...payload };
-      (postsRepo.createPost as Mock).mockImplementationOnce(() => expected);
+      postsRepo.createPost.mockResolvedValue();
+      postsRepo.generateId.mockReturnValue('id');
       const result = service.createPost(payload);
       await expect(result).resolves.toEqual(
         expect.objectContaining({
