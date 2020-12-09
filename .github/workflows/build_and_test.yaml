@@ -82,7 +82,7 @@ jobs:
           path: ./dist
 
   publish-test-coverage:
-    name: Publish tests results
+    name: Publish tests coverage
     needs: test
     runs-on: ubuntu-latest
     if: success()
@@ -92,6 +92,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: test-coverage
+          path: test-coverage
       - name: Publish test coverage
         uses: codecov/codecov-action@v1
         with:
@@ -102,13 +103,14 @@ jobs:
     name: Publish tests results
     needs: test
     runs-on: ubuntu-latest
-    if: always()
+    if: failure()
 
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
           name: test-results
+          path: test-results
       - name: Publish test results
         uses: EnricoMi/publish-unit-test-result-action@v1.6
         with:
