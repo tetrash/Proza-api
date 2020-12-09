@@ -11,7 +11,7 @@ describe('post entity', () => {
     });
 
     it('should map entity to domain object', () => {
-      const result = new PostEntity({});
+      const result = new PostEntity({ _id: '', body: '', owner: '', title: '' });
       expect(mapper.toDomain(result)).toEqual(
         expect.objectContaining({
           id: expect.any(String),

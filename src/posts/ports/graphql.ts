@@ -1,9 +1,9 @@
 import { IResolvers } from 'apollo-server-express';
-import { MongodbAdapter } from '../adapters/mongodb.adapter';
+import { PostsMongodbAdapter } from '../adapters/postsMongodb.adapter';
 import { PostsService } from '../posts.service';
 import { ApolloContext } from '../../common/clients/graphql';
 
-const postMongodbRepo = new MongodbAdapter();
+const postMongodbRepo = new PostsMongodbAdapter();
 const postService = new PostsService(postMongodbRepo);
 
 export const postsResolver: IResolvers<any, ApolloContext> = {
