@@ -26,9 +26,9 @@ export function newUser(payload: Partial<User>): User {
 
   return {
     id: payload.id,
+    username: payload.username,
     fullName: payload.fullName,
     role: payload.role || UserRole.user,
-    username: payload.username,
     createdAt: new Date(),
     updatedAt: new Date(),
   };
