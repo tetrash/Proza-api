@@ -85,6 +85,7 @@ jobs:
     name: Publish tests results
     needs: test
     runs-on: ubuntu-latest
+    if: always()
 
     steps:
       - name: Download Artifacts
