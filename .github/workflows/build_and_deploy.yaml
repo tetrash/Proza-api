@@ -3,7 +3,7 @@ name: Build and deploy
 on:
   push:
     tags:
-      - '*'
+      - '[0-9].[0-9]+.[0-9]+'
 
 jobs:
   build-and-deploy:
@@ -36,3 +36,4 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/proza-api:${{ env.RELEASE_VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/proza-api:latest
