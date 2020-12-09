@@ -1,18 +1,17 @@
 import { Post, PostRepository } from '../domain/post';
-import { DocumentType, getModelForClass } from '@typegoose/typegoose';
+import { getModelForClass } from '@typegoose/typegoose';
 import { PostEntity, PostEntityMapper } from '../entities/post.entity';
 import { DomainPaginationResult } from '../../common/interfaces/domainPaginationResult';
-import { PaginateResult } from 'mongoose';
 import { NotFoundError } from '../../common/errors/errors';
 import { v4 } from 'uuid';
 
-export class MongodbAdapter implements PostRepository {
+export class PostsMongodbAdapter implements PostRepository {
   private readonly mapper = new PostEntityMapper();
 
   constructor(private readonly PostModel = getModelForClass(PostEntity)) {}
 
   async getPost(postId: string): Promise<Post> {
-    const result: DocumentType<PostEntity> | null = await this.PostModel.findById(postId);
+    const result = await this.PostModel.findById(postId).lean();
 
     if (!result) {
       throw new NotFoundError('Post not found');
@@ -25,7 +24,7 @@ export class MongodbAdapter implements PostRepository {
     const next = Number(nextToken);
     const page = !Number.isNaN(next) ? next : 1;
 
-    const result: PaginateResult<DocumentType<PostEntity>> | null = await this.PostModel.paginate({}, { limit, page });
+    const result = await this.PostModel.paginate({}, { limit, page, lean: true });
 
     if (!result) {
       return { items: [] };

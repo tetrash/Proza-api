@@ -5,7 +5,7 @@ import { PaginatedModel } from '../../common/data/mongodb/paginateModel';
 
 @modelOptions({ schemaOptions: { collection: 'posts' } })
 export class PostEntity extends PaginatedModel {
-  constructor(payload: Partial<PostEntity>) {
+  constructor(payload: PostEntity) {
     super();
     Object.assign(this, payload);
   }
@@ -31,10 +31,10 @@ export class PostEntity extends PaginatedModel {
 export class PostEntityMapper implements DataMapper<Post, PostEntity> {
   toDomain(entity: DocumentType<PostEntity> | PostEntity): Post {
     return {
-      id: entity._id || '',
-      owner: entity.owner || '',
-      title: entity.title || '',
-      body: entity.body || '',
+      id: entity._id,
+      owner: entity.owner,
+      title: entity.title,
+      body: entity.body,
       updatedAt: (entity.updatedAt && new Date(entity.updatedAt)) || new Date(),
       createdAt: (entity.createdAt && new Date(entity.createdAt)) || new Date(),
     };

@@ -1,4 +1,4 @@
-import { MongodbAdapter } from './mongodb.adapter';
+import { PostsMongodbAdapter } from './postsMongodb.adapter';
 import { PostEntity } from '../entities/post.entity';
 import { getModelForClass } from '@typegoose/typegoose';
 import { NotFoundError } from '../../common/errors/errors';
@@ -7,7 +7,7 @@ import { newPost, Post } from '../domain/post';
 
 describe('posts mongodb adapter', () => {
   const postModel = getModelForClass(PostEntity);
-  const adapter = new MongodbAdapter(postModel);
+  const adapter = new PostsMongodbAdapter(postModel);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -15,14 +15,14 @@ describe('posts mongodb adapter', () => {
 
   describe('getPost', () => {
     it('should return post', async () => {
-      const result = new PostEntity({});
-      jest.spyOn(postModel, 'findById').mockReturnValue(result as any);
+      const result = new PostEntity({ _id: 'id', body: 'body', owner: 'owner', title: 'title' });
+      jest.spyOn(postModel, 'findById').mockImplementation(() => ({ lean: () => result } as any));
       await expect(adapter.getPost('')).resolves.toEqual(
         expect.objectContaining({
-          id: expect.any(String),
-          title: expect.any(String),
-          body: expect.any(String),
-          owner: expect.any(String),
+          id: 'id',
+          title: 'title',
+          body: 'body',
+          owner: 'owner',
           createdAt: expect.any(Date),
           updatedAt: expect.any(Date),
         }),
@@ -37,7 +37,7 @@ describe('posts mongodb adapter', () => {
     });
 
     it('should throw NotFoundError if no posts found', async () => {
-      jest.spyOn(postModel, 'findById').mockReturnValue(null as any);
+      jest.spyOn(postModel, 'findById').mockImplementation(() => ({ lean: () => null } as any));
       await expect(adapter.getPost('')).rejects.toThrow(NotFoundError);
     });
   });
@@ -45,7 +45,7 @@ describe('posts mongodb adapter', () => {
   describe('listPosts', () => {
     it('should return posts', async () => {
       const result: PaginateResult<PostEntity> = {
-        docs: [new PostEntity({})],
+        docs: [new PostEntity({ _id: '', body: '', owner: '', title: '' })],
         totalDocs: 1,
         limit: 1,
         totalPages: 1,

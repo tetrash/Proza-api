@@ -69,7 +69,9 @@ export class GraphqlServer {
 
     this.app.listen(this.config.port, () => {
       this.logger.info(`App is running at port ${this.config.port}`);
-      this.logger.info(`Open graphql playground http://localhost:${this.config.port}/graphql`);
+      if (this.config.isDevEnv) {
+        this.logger.info(`Open graphql playground http://localhost:${this.config.port}/graphql`);
+      }
     });
   }
 }
