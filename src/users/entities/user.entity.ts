@@ -17,6 +17,12 @@ export class UserEntity {
   @prop()
   fullName?: string;
 
+  @prop({ unique: true })
+  openid?: string;
+
+  @prop()
+  email?: string;
+
   @prop({ required: true })
   role: string;
 
@@ -34,6 +40,8 @@ export class UserEntityMapper implements DataMapper<User, UserEntity> {
       username: entity.username,
       fullName: entity.fullName,
       role: entity.role,
+      email: entity.email,
+      openid: entity.openid,
       updatedAt: (entity.updatedAt && new Date(entity.updatedAt)) || new Date(),
       createdAt: (entity.createdAt && new Date(entity.createdAt)) || new Date(),
     };
@@ -45,6 +53,8 @@ export class UserEntityMapper implements DataMapper<User, UserEntity> {
       username: domain.username,
       fullName: domain.fullName,
       role: domain.role,
+      email: domain.email,
+      openid: domain.openid,
       updatedAt: domain.updatedAt,
       createdAt: domain.createdAt,
     });

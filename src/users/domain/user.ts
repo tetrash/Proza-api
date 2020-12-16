@@ -4,6 +4,8 @@ export interface User {
   id: string;
   username: string;
   fullName?: string;
+  openid?: string;
+  email?: string;
   role: UserRole | string;
   createdAt: Date;
   updatedAt: Date;
@@ -28,6 +30,8 @@ export function newUser(payload: Partial<User>): User {
     id: payload.id,
     username: payload.username,
     fullName: payload.fullName,
+    email: payload.email,
+    openid: payload.openid,
     role: payload.role || UserRole.user,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -37,5 +41,6 @@ export function newUser(payload: Partial<User>): User {
 export interface UserRepository {
   generateId(): string;
   getUser(userId: string): Promise<User>;
+  getUserByOpenid(openid: string): Promise<User | null>;
   createUser(payload: User): Promise<void>;
 }

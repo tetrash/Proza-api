@@ -49,4 +49,28 @@ describe('users mongodb adapter', () => {
       expect(userModel.create).toHaveBeenCalledWith({ ...result, _id: id });
     });
   });
+
+  describe('getUserByOpenid', () => {
+    it('should return user', async () => {
+      const result = new UserEntity({ _id: 'id', role: 'test', username: 'test', openid: 'openid' });
+      jest.spyOn(userModel, 'findOne').mockResolvedValue(result as any);
+
+      await expect(adapter.getUserByOpenid('')).resolves.toEqual(
+        expect.objectContaining({
+          id: expect.any(String),
+          username: expect.any(String),
+          role: expect.any(String),
+          openid: expect.any(String),
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+        }),
+      );
+    });
+
+    it("should return null if user doesn't exist", async () => {
+      jest.spyOn(userModel, 'findOne').mockResolvedValue(undefined as any);
+
+      await expect(adapter.getUserByOpenid('')).resolves.toEqual(null);
+    });
+  });
 });

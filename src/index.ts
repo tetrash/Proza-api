@@ -3,26 +3,25 @@ import { Config } from './common/config/config';
 import { validateOrReject } from 'class-validator';
 import { GraphqlServer } from './common/clients/graphql';
 import { connect } from 'mongoose';
-import { IResolvers } from 'apollo-server-express';
-import { postsResolver } from './posts/ports/graphql';
+import { config as dotenv } from 'dotenv';
+
+dotenv();
 
 const config = new Config();
 const winstonLogger = new WinstonLogger(config.logLevel);
 
-const resolvers: IResolvers[] = [postsResolver];
-
 async function init() {
   await validateOrReject(config);
-  await connect(config.mongodbConfig.url, {
+  const mongo = await connect(config.mongodb.url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    dbName: config.mongodbConfig.dbName,
-    user: config.mongodbConfig.user,
-    pass: config.mongodbConfig.password,
+    dbName: config.mongodb.dbName,
+    user: config.mongodb.user,
+    pass: config.mongodb.password,
     autoCreate: true,
   });
 
-  const graphqlServer = new GraphqlServer(config, winstonLogger, resolvers);
+  const graphqlServer = new GraphqlServer(config, winstonLogger, mongo.connection);
 
   await graphqlServer.start();
 }

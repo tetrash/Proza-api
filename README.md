@@ -70,3 +70,5 @@ Type: string
 ```
 $ yarn test
 ```
+
+## User authentication

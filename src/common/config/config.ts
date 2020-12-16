@@ -1,5 +1,6 @@
-import { IsBoolean, IsIn, IsInt, ValidateNested } from 'class-validator';
+import { IsIn, IsInt, ValidateNested } from 'class-validator';
 import { MongodbConfig } from './mongodbConfig';
+import { AuthConfig } from './authConfig';
 
 export class Config {
   constructor(params?: Partial<Config>) {
@@ -15,9 +16,13 @@ export class Config {
   @IsIn(['dev', 'prod', 'test'])
   env: string = process.env.ENV || 'dev';
 
-  @IsBoolean()
   isDevEnv: boolean = this.env === 'dev';
 
+  isProdEnv: boolean = this.env === 'prod';
+
   @ValidateNested()
-  mongodbConfig: MongodbConfig = new MongodbConfig();
+  mongodb: MongodbConfig = new MongodbConfig();
+
+  @ValidateNested()
+  auth: AuthConfig = new AuthConfig();
 }
