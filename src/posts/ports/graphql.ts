@@ -17,7 +17,7 @@ export const postsResolver: IResolvers<any, ApolloContext> = {
   },
   Mutation: {
     createPost: (parent, args, ctx) => {
-      return postService.createPost({ ...args.post, owner: ctx.userId });
+      return postService.createPost({ ...args.post, owner: ctx.user.id });
     },
   },
 };

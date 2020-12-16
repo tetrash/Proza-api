@@ -1,0 +1,20 @@
+enum UserRole {
+  admin
+  moderator
+  user
+}
+
+type User {
+  id: String
+  username: String
+  fullName: String
+  email: String
+  openid: String
+  role: UserRole
+  createdAt: String
+  updatedAt: String
+}
+
+type Query {
+  me: User
+}

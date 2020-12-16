@@ -6,27 +6,37 @@ import { Logger } from '../logger/logger';
 import cors from 'cors';
 import helmet from 'helmet';
 import * as bodyParser from 'body-parser';
+import session, { Session } from 'express-session';
+import { postsResolver } from '../../posts/ports/graphql';
+import { User } from '../../users/domain/user';
+import { createUserRouter } from '../../users/ports/express';
+import { usersResolver } from '../../users/ports/graphql';
+import { Connection } from 'mongoose';
+import mongoStoreFactory from 'connect-mongo';
 
-declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
-  namespace Express {
-    interface Request {
-      id?: string;
-    }
+export interface ApolloContext {
+  user: User;
+  session: Session;
+}
+
+declare module 'express-session' {
+  interface Session {
+    accessToken: string;
+    user: User;
   }
 }
 
-export interface ApolloContext {
-  userId?: string;
-  userEmail?: string;
-  username?: string;
-}
+const resolvers: IResolvers[] = [postsResolver, usersResolver];
 
 export class GraphqlServer {
   private readonly app = express();
   private readonly gqlServer: ApolloServer;
 
-  constructor(private readonly config: Config, private readonly logger: Logger, resolvers: IResolvers[]) {
+  constructor(
+    private readonly config: Config,
+    private readonly logger: Logger,
+    private readonly mongoConnection: Connection,
+  ) {
     const schema = addResolversToSchema({
       schema: this.loadGraphqlSchemas('api/graphql/**/*.graphql'),
       resolvers: mergeResolvers(resolvers),
@@ -35,20 +45,19 @@ export class GraphqlServer {
     this.gqlServer = new ApolloServer({
       schema,
       logger: this.logger,
-      playground: this.config.isDevEnv,
+      playground: this.config.isDevEnv
+        ? {
+            settings: {
+              'request.credentials': 'include',
+            },
+          }
+        : false,
       introspection: this.config.isDevEnv,
       debug: this.config.isDevEnv,
       context: (context): ApolloContext => {
-        const userIdHeader = context.req.headers['x-forwarded-user'];
-        const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
-        const userEmailHeader = context.req.headers['x-forwarded-email'];
-        const userEmail = Array.isArray(userEmailHeader) ? userEmailHeader[0] : userEmailHeader;
-        const usernameHeader = context.req.headers['x-forwarded-preferred-username'];
-        const username = Array.isArray(usernameHeader) ? usernameHeader[0] : usernameHeader;
         return {
-          userId,
-          userEmail,
-          username,
+          user: context.req.session.user,
+          session: context.req.session,
         };
       },
     });
@@ -60,10 +69,36 @@ export class GraphqlServer {
     });
   }
 
-  async start() {
+  private setupOAuth2() {
+    this.logger.info('Setting up oauth2 client');
+    const userRouter = createUserRouter(this.config.auth.oauth2);
+    this.app.use('/auth', userRouter);
+  }
+
+  private setupExpressSession() {
+    const MongoStore = mongoStoreFactory(session);
+    this.app.use(
+      session({
+        secret: this.config.auth.sessionSecret,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+          secure: this.config.isProdEnv,
+        },
+        store: new MongoStore({ mongooseConnection: this.mongoConnection }),
+      }),
+    );
+  }
+
+  async start(): Promise<void> {
     this.app.use(cors());
     this.app.use(helmet({ contentSecurityPolicy: this.config.env === 'dev' ? false : undefined }));
     this.app.use(bodyParser.json());
+    this.setupExpressSession();
+
+    if (this.config.auth.isOAuth2Enabled) {
+      this.setupOAuth2();
+    }
 
     this.gqlServer.applyMiddleware({ app: this.app });
 
