@@ -15,14 +15,21 @@ describe('posts mongodb adapter', () => {
 
   describe('getPost', () => {
     it('should return post', async () => {
-      const result = new PostEntity({ _id: 'id', body: 'body', owner: 'owner', title: 'title' });
-      jest.spyOn(postModel, 'findById').mockImplementation(() => ({ lean: () => result } as any));
+      const result = new PostEntity({ _id: 'id', body: 'body', author: 'owner', title: 'title' });
+      jest.spyOn(postModel, 'findById').mockImplementation(
+        () =>
+          ({
+            populate: () => ({
+              lean: () => result,
+            }),
+          } as any),
+      );
       await expect(adapter.getPost('')).resolves.toEqual(
         expect.objectContaining({
           id: 'id',
           title: 'title',
           body: 'body',
-          owner: 'owner',
+          author: 'owner',
           createdAt: expect.any(Date),
           updatedAt: expect.any(Date),
         }),
@@ -37,7 +44,14 @@ describe('posts mongodb adapter', () => {
     });
 
     it('should throw NotFoundError if no posts found', async () => {
-      jest.spyOn(postModel, 'findById').mockImplementation(() => ({ lean: () => null } as any));
+      jest.spyOn(postModel, 'findById').mockImplementation(
+        () =>
+          ({
+            populate: () => ({
+              lean: () => null,
+            }),
+          } as any),
+      );
       await expect(adapter.getPost('')).rejects.toThrow(NotFoundError);
     });
   });
@@ -45,7 +59,7 @@ describe('posts mongodb adapter', () => {
   describe('listPosts', () => {
     it('should return posts', async () => {
       const result: PaginateResult<PostEntity> = {
-        docs: [new PostEntity({ _id: '', body: '', owner: '', title: '' })],
+        docs: [new PostEntity({ _id: '', body: '', author: '', title: '' })],
         totalDocs: 1,
         limit: 1,
         totalPages: 1,

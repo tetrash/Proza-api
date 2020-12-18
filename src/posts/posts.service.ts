@@ -4,6 +4,10 @@ import { GetPostDto } from './dto/getPost.dto';
 import { ListPostsDto } from './dto/listPosts.dto';
 import { DomainPaginationResult } from '../common/interfaces/domainPaginationResult';
 import { CreatePostDto } from './dto/createPost.dto';
+import { ServiceContext } from '../common/interfaces/serviceContext';
+import { HasRole } from '../common/decorators/hasRole';
+import { UserRole } from '../users/domain/user';
+import { NotAuthenticatedError } from '../common/errors/errors';
 
 export class PostsService {
   constructor(private readonly postRepo: PostRepository) {}
@@ -18,10 +22,15 @@ export class PostsService {
     return this.postRepo.listPosts(payload.limit, payload.nextToken);
   }
 
+  @HasRole([UserRole.admin, UserRole.moderator])
   @Validate(CreatePostDto)
-  async createPost(payload: CreatePostDto): Promise<Post> {
+  async createPost(payload: CreatePostDto, ctx: ServiceContext): Promise<Post> {
+    if (!ctx.user) {
+      throw new NotAuthenticatedError();
+    }
+
     const id = this.postRepo.generateId();
-    const post: Post = newPost({ ...payload, id });
+    const post: Post = newPost({ ...payload, id, author: ctx.user.id });
     await this.postRepo.createPost(post);
     return post;
   }
