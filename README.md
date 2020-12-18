@@ -1,5 +1,9 @@
 # Proza API
-[![codecov](https://codecov.io/gh/tetrash/Proza-api/branch/main/graph/badge.svg?token=LBE4LJQDYN)](https://codecov.io/gh/tetrash/Proza-api)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/tetrash/proza-api)
+![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/tetrash/proza-api/Build%20and%20test/main)
+[![Codecov coverage](https://codecov.io/gh/tetrash/Proza-api/branch/main/graph/badge.svg?token=LBE4LJQDYN)](https://codecov.io/gh/tetrash/Proza-api)
+![GitHub](https://img.shields.io/github/license/tetrash/proza-api)
+![GitHub milestone](https://img.shields.io/github/milestones/progress/tetrash/proza-api/1)
 
 Open-source blog api.
 
