@@ -1,9 +1,10 @@
 import { DomainPaginationResult } from '../../common/interfaces/domainPaginationResult';
 import { IncorrectInputError } from '../../common/errors/errors';
+import { PostAuthor } from './postAuthor';
 
 export interface Post {
   id: string;
-  owner: string;
+  author: PostAuthor | string;
   title: string;
   body: string;
   createdAt: Date;
@@ -17,7 +18,7 @@ export function newPost(payload: Partial<Post>): Post {
 
   return {
     id: payload.id,
-    owner: payload.owner || 'Unknown',
+    author: payload.author || '',
     title: payload.title || 'Title',
     body: payload.body || '',
     createdAt: new Date(),

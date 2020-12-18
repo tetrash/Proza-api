@@ -1,6 +1,12 @@
+type PostAuthor {
+  id: String
+  username: String
+  fullname: String
+}
+
 type Post {
   id: ID!
-  owner: String
+  author: PostAuthor
   title: String!
   body: String!
   updatedAt: String!

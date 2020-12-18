@@ -11,7 +11,7 @@ describe('posts service', () => {
     id: 'testId',
     title: 'testTitle',
     body: 'testBody',
-    owner: 'testOwner',
+    author: 'testOwner',
     updatedAt: new Date(),
     createdAt: new Date(),
   };
@@ -43,16 +43,16 @@ describe('posts service', () => {
 
   describe('createPost', () => {
     it('should return post', async () => {
-      const payload = { title: 'test', body: 'test', owner: 'test' };
+      const payload = { title: 'test', body: 'test' };
       postsRepo.createPost.mockResolvedValue();
       postsRepo.generateId.mockReturnValue('id');
-      const result = service.createPost(payload);
+      const result = service.createPost(payload, { user: { id: 'str', role: 'admin' } as any });
       await expect(result).resolves.toEqual(
         expect.objectContaining({
           id: expect.any(String),
           title: expect.any(String),
           body: expect.any(String),
-          owner: expect.any(String),
+          author: expect.any(String),
           createdAt: expect.any(Date),
           updatedAt: expect.any(Date),
         }),

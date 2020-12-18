@@ -11,7 +11,7 @@ export class PostsMongodbAdapter implements PostRepository {
   constructor(private readonly PostModel = getModelForClass(PostEntity)) {}
 
   async getPost(postId: string): Promise<Post> {
-    const result = await this.PostModel.findById(postId).lean();
+    const result = await this.PostModel.findById(postId).populate(['author']).lean();
 
     if (!result) {
       throw new NotFoundError('Post not found');
@@ -24,7 +24,7 @@ export class PostsMongodbAdapter implements PostRepository {
     const next = Number(nextToken);
     const page = !Number.isNaN(next) ? next : 1;
 
-    const result = await this.PostModel.paginate({}, { limit, page, lean: true });
+    const result = await this.PostModel.paginate({}, { limit, page, lean: true, populate: ['author'] });
 
     if (!result) {
       return { items: [] };

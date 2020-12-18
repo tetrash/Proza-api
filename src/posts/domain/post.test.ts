@@ -10,7 +10,7 @@ describe('post domain', () => {
           id: expect.any(String),
           title: expect.any(String),
           body: expect.any(String),
-          owner: expect.any(String),
+          author: expect.any(String),
           createdAt: expect.any(Date),
           updatedAt: expect.any(Date),
         }),

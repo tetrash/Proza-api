@@ -15,7 +15,7 @@ import { Connection } from 'mongoose';
 import mongoStoreFactory from 'connect-mongo';
 
 export interface ApolloContext {
-  user: User;
+  user?: User;
   session: Session;
 }
 

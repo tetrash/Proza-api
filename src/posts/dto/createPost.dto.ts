@@ -11,7 +11,4 @@ export class CreatePostDto {
   @IsString()
   @IsOptional()
   body?: string;
-
-  @IsString()
-  owner: string;
 }
