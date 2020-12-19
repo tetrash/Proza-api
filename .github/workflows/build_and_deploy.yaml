@@ -26,7 +26,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Set release version env
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        run: |
+          export TAG=${GITHUB_REF#refs/*/}
+          echo "RELEASE_VERSION=$TAG" >> $GITHUB_ENV
+          echo "RELEASE_VERSION_MINOR=$(echo "$TAG" | cut -d"." -f2)" >> $GITHUB_ENV
+          echo "RELEASE_VERSION_MAJOR=$(echo "$TAG" | cut -d"." -f1)" >> $GITHUB_ENV
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
@@ -35,5 +39,7 @@ jobs:
           platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
           push: true
           tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/proza-api:${{ env.RELEASE_VERSION_MAJOR }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/proza-api:${{ env.RELEASE_VERSION_MINOR }}
             ${{ secrets.DOCKERHUB_USERNAME }}/proza-api:${{ env.RELEASE_VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/proza-api:latest
