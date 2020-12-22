@@ -11,6 +11,7 @@ type User {
   email: String
   openid: String
   role: UserRole
+  avatarUrl: String
   createdAt: String
   updatedAt: String
 }

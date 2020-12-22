@@ -14,7 +14,8 @@ export const createUserRouter = (oauth2Config: OAuth2Config): Router => {
   const client = new ClientOAuth2(oauth2Config);
 
   router.get('/oauth2', (req, res) => {
-    const uri = client.code.getUri();
+    const { redirectTo } = req.query;
+    const uri = client.code.getUri({ state: redirectTo ? redirectTo.toString() : undefined });
     return res.redirect(uri);
   });
 
@@ -37,6 +38,10 @@ export const createUserRouter = (oauth2Config: OAuth2Config): Router => {
     req.session.accessToken = token.accessToken;
     req.session.user = user;
 
+    const { state } = req.query;
+    if (state && state !== '') {
+      return res.redirect(state.toString());
+    }
     return res.send();
   });
 
@@ -46,6 +51,12 @@ export const createUserRouter = (oauth2Config: OAuth2Config): Router => {
         throw new InternalError(err);
       }
       res.clearCookie('connect.sid');
+
+      const { redirectTo } = req.query;
+
+      if (redirectTo && redirectTo !== '') {
+        return res.redirect(redirectTo.toString());
+      }
       return res.send();
     });
   });

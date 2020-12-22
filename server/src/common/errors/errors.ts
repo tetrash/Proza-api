@@ -8,7 +8,7 @@ export enum ErrorType {
 
 export abstract class CustomError extends Error {
   constructor(public readonly errorDetails?: any, msg?: string) {
-    super(msg || errorDetails.toString());
+    super(msg || (errorDetails && errorDetails.toString()) || undefined);
   }
 
   abstract readonly type: ErrorType;

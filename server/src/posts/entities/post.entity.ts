@@ -15,7 +15,7 @@ export class PostEntity extends PaginatedModel {
   @prop()
   _id: string;
 
-  @prop({ required: true, ref: () => UserEntity, refType: Schema.Types.String })
+  @prop({ required: true, ref: () => UserEntity, type: Schema.Types.String })
   author: Ref<UserEntity, string>;
 
   @prop({ required: true })
