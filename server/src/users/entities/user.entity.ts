@@ -27,6 +27,9 @@ export class UserEntity {
   role: string;
 
   @prop()
+  avatarUrl?: string;
+
+  @prop()
   createdAt?: Date;
 
   @prop()
@@ -42,6 +45,7 @@ export class UserEntityMapper implements DataMapper<User, UserEntity> {
       role: entity.role,
       email: entity.email,
       openid: entity.openid,
+      avatarUrl: entity.avatarUrl,
       updatedAt: (entity.updatedAt && new Date(entity.updatedAt)) || new Date(),
       createdAt: (entity.createdAt && new Date(entity.createdAt)) || new Date(),
     };
@@ -55,6 +59,7 @@ export class UserEntityMapper implements DataMapper<User, UserEntity> {
       role: domain.role,
       email: domain.email,
       openid: domain.openid,
+      avatarUrl: domain.avatarUrl,
       updatedAt: domain.updatedAt,
       createdAt: domain.createdAt,
     });

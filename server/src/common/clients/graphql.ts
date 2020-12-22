@@ -55,8 +55,9 @@ export class GraphqlServer {
       introspection: this.config.isDevEnv,
       debug: this.config.isDevEnv,
       context: (context): ApolloContext => {
+        const { user } = context.req.session;
         return {
-          user: context.req.session.user,
+          user,
           session: context.req.session,
         };
       },
@@ -84,6 +85,7 @@ export class GraphqlServer {
         saveUninitialized: false,
         cookie: {
           secure: this.config.isProdEnv,
+          httpOnly: this.config.isProdEnv,
         },
         store: new MongoStore({ mongooseConnection: this.mongoConnection }),
       }),
@@ -91,7 +93,12 @@ export class GraphqlServer {
   }
 
   async start(): Promise<void> {
-    this.app.use(cors());
+    this.app.use(
+      cors({
+        origin: this.config.corsOrigin,
+        credentials: true,
+      }),
+    );
     this.app.use(helmet({ contentSecurityPolicy: this.config.env === 'dev' ? false : undefined }));
     this.app.use(bodyParser.json());
     this.setupExpressSession();
@@ -100,7 +107,7 @@ export class GraphqlServer {
       this.setupOAuth2();
     }
 
-    this.gqlServer.applyMiddleware({ app: this.app });
+    this.gqlServer.applyMiddleware({ app: this.app, cors: { credentials: true, origin: true } });
 
     this.app.listen(this.config.port, () => {
       this.logger.info(`App is running at port ${this.config.port}`);

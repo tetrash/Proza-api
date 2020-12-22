@@ -6,6 +6,7 @@ export interface User {
   fullName?: string;
   openid?: string;
   email?: string;
+  avatarUrl?: string;
   role: UserRole | string;
   createdAt: Date;
   updatedAt: Date;
@@ -30,6 +31,7 @@ export function newUser(payload: Partial<User>): User {
     id: payload.id,
     username: payload.username,
     fullName: payload.fullName,
+    avatarUrl: payload.avatarUrl,
     email: payload.email,
     openid: payload.openid,
     role: payload.role || UserRole.user,
