@@ -71,14 +71,14 @@ describe('posts mongodb adapter', () => {
       };
 
       jest.spyOn(postModel, 'paginate').mockResolvedValue(result);
-      await expect(adapter.listPosts(1, '1')).resolves.toHaveProperty('items');
-      expect((await adapter.listPosts(1)).items).toHaveLength(1);
+      await expect(adapter.listPosts(1, 1)).resolves.toHaveProperty('items');
+      expect((await adapter.listPosts(1, 1)).items).toHaveLength(1);
     });
 
     it('should return empty array', async () => {
       jest.spyOn(postModel, 'paginate').mockResolvedValue(null as any);
-      await expect(adapter.listPosts(1)).resolves.toHaveProperty('items');
-      expect((await adapter.listPosts(1)).items).toHaveLength(0);
+      await expect(adapter.listPosts(1, 1)).resolves.toHaveProperty('items');
+      expect((await adapter.listPosts(1, 1)).items).toHaveLength(0);
     });
   });
 

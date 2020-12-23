@@ -20,21 +20,25 @@ export class PostsMongodbAdapter implements PostRepository {
     return this.mapper.toDomain(result);
   }
 
-  async listPosts(limit: number = 10, nextToken?: string): Promise<DomainPaginationResult<Post>> {
-    const next = Number(nextToken);
-    const page = !Number.isNaN(next) ? next : 1;
-
-    const result = await this.PostModel.paginate({}, { limit, page, lean: true, populate: ['author'] });
+  async listPosts(limit: number = 10, page: number): Promise<DomainPaginationResult<Post>> {
+    const result = await this.PostModel.paginate(
+      {},
+      { limit, page, lean: true, populate: ['author'], sort: { createdAt: -1 } },
+    );
 
     if (!result) {
-      return { items: [] };
+      return { items: [], totalItems: 0, page: 1, totalPages: 1, nextPage: null, previousPage: null };
     }
 
     const items = result.docs.map((doc) => this.mapper.toDomain(doc));
 
     return {
       items,
-      nextToken: typeof result.nextPage === 'number' ? result.nextPage.toString() : undefined,
+      nextPage: result.hasNextPage && result.nextPage ? result.nextPage : null,
+      previousPage: result.hasPrevPage && result.prevPage ? result.prevPage : null,
+      totalItems: result.totalDocs,
+      totalPages: result.totalPages,
+      page: result.page || page,
     };
   }
 

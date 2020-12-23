@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString, Max } from 'class-validator';
+import { IsNumber, IsOptional, IsPositive, Max } from 'class-validator';
 
 export class ListPostsDto {
   constructor(obj: Partial<ListPostsDto>) {
@@ -9,7 +9,8 @@ export class ListPostsDto {
   @Max(100)
   limit: number = 10;
 
-  @IsString()
+  @IsNumber()
+  @IsPositive()
   @IsOptional()
-  nextToken?: string;
+  page?: number;
 }

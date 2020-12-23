@@ -28,7 +28,7 @@ export function newPost(payload: Partial<Post>): Post {
 
 export interface PostRepository {
   getPost(postId: string): Promise<Post>;
-  listPosts(limit: number, nextToken?: string): Promise<DomainPaginationResult<Post>>;
+  listPosts(limit: number, page: number): Promise<DomainPaginationResult<Post>>;
   createPost(post: Post): Promise<void>;
   generateId(): string;
 }

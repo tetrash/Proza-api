@@ -19,7 +19,7 @@ export class PostsService {
 
   @Validate(ListPostsDto)
   async listPosts(payload: ListPostsDto): Promise<DomainPaginationResult<Post>> {
-    return this.postRepo.listPosts(payload.limit, payload.nextToken);
+    return this.postRepo.listPosts(payload.limit, payload.page || 1);
   }
 
   @HasRole([UserRole.admin, UserRole.moderator])

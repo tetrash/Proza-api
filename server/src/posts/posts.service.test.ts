@@ -33,7 +33,11 @@ describe('posts service', () => {
     it('should return list of posts', async () => {
       const expected: DomainPaginationResult<Post> = {
         items: [post],
-        nextToken: '',
+        page: 1,
+        previousPage: null,
+        nextPage: null,
+        totalPages: 1,
+        totalItems: 1,
       };
       postsRepo.listPosts.mockResolvedValue(expected);
       const result = service.listPosts({ limit: 2 });
