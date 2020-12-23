@@ -1,0 +1,7 @@
+interface Pagination {
+  nextPage: Int
+  previousPage: Int
+  page: Int!
+  totalPages: Int!
+  totalItems: Int!
+}

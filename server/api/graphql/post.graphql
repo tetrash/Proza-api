@@ -13,14 +13,18 @@ type Post {
   createdAt: String!
 }
 
-type PostListResult {
-  nextToken: String
+type PostListResult implements Pagination {
   items: [Post]
+  nextPage: Int
+  previousPage: Int
+  totalItems: Int!
+  totalPages: Int!
+  page: Int!
 }
 
 input PostListPagination {
   limit: Int
-  nextToken: String
+  page: Int
 }
 
 input createPost {

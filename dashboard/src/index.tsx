@@ -11,9 +11,24 @@ const link = createHttpLink({
   credentials: 'include'
 });
 
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        listPosts: {
+          keyArgs: false,
+          merge: (existing, incoming) => {
+            return incoming;
+          }
+        }
+      }
+    }
+  }
+})
+
 const apolloClient = new ApolloClient({
   link,
-  cache: new InMemoryCache()
+  cache,
 });
 
 ReactDOM.render(
