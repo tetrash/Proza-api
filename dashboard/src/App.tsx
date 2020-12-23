@@ -1,114 +1,64 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './App.css';
-import PrimaryAppBar from './components/primaryAppBar';
-import { ApolloClient, ApolloProvider, createHttpLink, gql, InMemoryCache } from '@apollo/client';
-import { CircularProgress, Grid, Typography } from '@material-ui/core';
-import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
+import { useQuery } from '@apollo/client';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import PrimaryNav from './components/primaryNav';
+import PostsPage from './pages/posts.page';
+import Loader from './components/loader';
+import AccessDenied from './components/accessDenied';
 import LoginPage from './pages/login.page';
-import { config } from './config';
+import PrimaryAppBar from './components/primaryAppBar';
+import { createStyles, CssBaseline, makeStyles, Theme, Toolbar } from '@material-ui/core';
+import { GET_USER_DATA, GetUserData } from './graphql/queries';
 
-interface User { id: string, email?: string, username?: string, fullName?: string, avatarUrl?: string, role: string }
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    content: {
+      flexGrow: 1,
+      padding: theme.spacing(3),
+    },
+    root: {
+      display: 'flex',
+    },
+  }),
+);
 
-interface AppState {
-  user?: User
-  isLoading: boolean
-}
+export default function App() {
+  const { loading, data, error } = useQuery<GetUserData, {}>(GET_USER_DATA);
+  const classes = useStyles();
 
-const link = createHttpLink({
-  uri: `${config.backendDomain}/graphql`,
-  credentials: 'include'
-});
-
-class App extends Component<{}, AppState>{
-  apolloClient = new ApolloClient({
-    link,
-    cache: new InMemoryCache()
-  });
-
-  state: AppState = {
-    isLoading: true
+  if (loading) {
+    return <Loader />
   }
 
-  async fetchUserData() {
-    const result = await this.apolloClient.query<{ me: User }>({
-      query: gql`
-        query getMyData {
-          me {
-            id
-            email
-            username
-            fullName
-            avatarUrl
-            role
-          }
-        }
-      `
-    });
-
-    return result;
+  if (error) {
+    return <LoginPage />
   }
 
-  async componentDidMount() {
-    try {
-      const { data, loading } = await this.fetchUserData();
-      this.setState({ user: data.me, isLoading: loading });
-    } catch (e) {
-      this.setState({ isLoading: false });
-    }
-  }
-
-  loadApp() {
-    if (this.state.isLoading) {
-      return <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        justify="center"
-        style={{ minHeight: '100vh' }}
-      >
-        <CircularProgress />
-      </Grid>
-    }
-
-    const { user } = this.state;
-
-    if (!user) {
-      return <Redirect to="/login"/>
-    }
-
-    const hasRole = user && ['admin', 'moderator'].includes(user.role);
+  if (data) {
+    const hasRole = ['admin', 'moderator'].includes(data.me.role);
     if (!hasRole) {
-      return <Grid
-        container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        justify="center"
-        style={{ minHeight: '100vh' }}
-      >
-        <Typography variant="h2">Access Denied!</Typography>
-      </Grid>
+      return <AccessDenied />
     }
-    return <PrimaryAppBar userName={ user.username } avatarUrl={ user.avatarUrl } />
-  }
 
-  render() {
     return (
-      <div className="App">
-        <ApolloProvider client={this.apolloClient}>
-          <BrowserRouter>
-            { this.loadApp() }
-            <Switch>
-              <Route path="/login">
-                <LoginPage isLogged={!!this.state.user} />
+      <div className={classes.root}>
+        <BrowserRouter>
+          <CssBaseline />
+          <PrimaryAppBar userName={ data.me.username } avatarUrl={ data.me.avatarUrl } />
+          <PrimaryNav />
+          <Switch>
+            <main className={classes.content}>
+              <Toolbar />
+              <Route path="/posts">
+                <PostsPage />
               </Route>
-            </Switch>
-          </BrowserRouter>
-        </ApolloProvider>
+            </main>
+          </Switch>
+        </BrowserRouter>
       </div>
     );
   }
-}
 
-export default App;
+  return <AccessDenied />
+}
