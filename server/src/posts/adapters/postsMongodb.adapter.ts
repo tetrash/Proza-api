@@ -1,9 +1,10 @@
-import { Post, PostRepository } from '../domain/post';
+import { Post } from '../domain/post';
 import { getModelForClass } from '@typegoose/typegoose';
 import { PostEntity, PostEntityMapper } from '../entities/post.entity';
 import { DomainPaginationResult } from '../../common/interfaces/domainPaginationResult';
 import { NotFoundError } from '../../common/errors/errors';
 import { v4 } from 'uuid';
+import { PostRepository } from '../domain/repository';
 
 export class PostsMongodbAdapter implements PostRepository {
   private readonly mapper = new PostEntityMapper();
@@ -49,5 +50,9 @@ export class PostsMongodbAdapter implements PostRepository {
 
   generateId(): string {
     return v4();
+  }
+
+  async deletePost(postId: string): Promise<void> {
+    await this.PostModel.deleteOne({ _id: postId });
   }
 }
