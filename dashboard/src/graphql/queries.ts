@@ -11,7 +11,7 @@ export const GET_USER_DATA = gql`
       role
     }
   }
-`
+`;
 
 export interface GetUserData {
   me: {
@@ -21,12 +21,12 @@ export interface GetUserData {
     fullName?: string;
     avatarUrl?: string;
     role: string;
-  }
+  };
 }
 
 export const LIST_POSTS = gql`
   query ListPosts($page: Int, $limit: Int) {
-    listPosts(paginate: {page: $page, limit: $limit}) {
+    listPosts(paginate: { page: $page, limit: $limit }) {
       items {
         id
         title
@@ -45,7 +45,7 @@ export const LIST_POSTS = gql`
       totalPages
     }
   }
-`
+`;
 
 export interface PostAuthor {
   id: string;
@@ -69,7 +69,7 @@ export interface ListPosts {
     nextPage?: number;
     totalItems: number;
     totalPages: number;
-  }
+  };
 }
 
 export const CREATE_POST = gql`
@@ -78,12 +78,12 @@ export const CREATE_POST = gql`
       id
     }
   }
-`
+`;
 
 export interface CreatePostResult {
   createPost: {
-    id: string
-  }
+    id: string;
+  };
 }
 
 export const GET_POST = gql`
@@ -96,14 +96,14 @@ export const GET_POST = gql`
       updatedAt
     }
   }
-`
+`;
 
 export interface GetPostResult {
   getPost: {
-    id: string
-    body: string
-    title: string
-    createdAt: string
-    updatedAt: string
-  }
+    id: string;
+    body: string;
+    title: string;
+    createdAt: string;
+    updatedAt: string;
+  };
 }

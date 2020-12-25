@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from '@apollo/client';
 import { config } from './config';
 
 const link = createHttpLink({
   uri: `${config.backendDomain}/graphql`,
-  credentials: 'include'
+  credentials: 'include',
 });
 
 const cache = new InMemoryCache({
@@ -19,12 +19,12 @@ const cache = new InMemoryCache({
           keyArgs: false,
           merge: (existing, incoming) => {
             return incoming;
-          }
-        }
-      }
-    }
-  }
-})
+          },
+        },
+      },
+    },
+  },
+});
 
 const apolloClient = new ApolloClient({
   link,
@@ -37,7 +37,7 @@ ReactDOM.render(
       <App />
     </ApolloProvider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
 
 // If you want to start measuring performance in your app, pass a function

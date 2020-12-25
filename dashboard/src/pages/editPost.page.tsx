@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom"
+import { useParams } from 'react-router-dom';
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_POST, GetPostResult } from '../graphql/queries';
@@ -11,15 +11,15 @@ export default function EditPostPage() {
 
   const handleSubmit = (e: any) => {
     console.log(e);
-  }
+  };
 
   if (loading) {
-    return <Loader />
+    return <Loader />;
   }
 
   if (!data) {
-    return <div></div>
+    return <div />;
   }
 
-  return <PostForm onSubmit={handleSubmit} initState={data.getPost} />
+  return <PostForm onSubmit={handleSubmit} initState={data.getPost} />;
 }

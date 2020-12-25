@@ -1,19 +1,22 @@
 import React, { MouseEvent, useState } from 'react';
 import {
   IconButton,
-  makeStyles, Menu, MenuItem,
+  makeStyles,
+  Menu,
+  MenuItem,
   Paper,
   Table,
-  TableBody, TableCell,
+  TableBody,
+  TableCell,
   TableContainer,
   TableHead,
   TablePagination,
   TableRow,
 } from '@material-ui/core';
 import { useQuery } from '@apollo/client';
-import Loader from '../components/loader';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useHistory } from 'react-router-dom';
+import Loader from '../components/loader';
 import { LIST_POSTS, ListPosts, PostAuthor, Post } from '../graphql/queries';
 
 const styles = makeStyles((theme) => ({
@@ -33,69 +36,77 @@ interface Column {
 
 const columns: Column[] = [
   { id: 'title', label: 'Title', minWidth: 170 },
-  { id: 'author', label: 'Author', minWidth: 100, align: 'right', format: (value: PostAuthor) => `${value.username} ${value.fullname && `(${value.fullname})`}` },
+  {
+    id: 'author',
+    label: 'Author',
+    minWidth: 100,
+    align: 'right',
+    format: (value: PostAuthor) => `${value.username} ${value.fullname && `(${value.fullname})`}`,
+  },
   {
     id: 'updatedAt',
     label: 'Updated at',
     minWidth: 170,
     align: 'right',
-    format: (value) => (new Date(Number(value))).toLocaleString(),
+    format: (value) => new Date(Number(value)).toLocaleString(),
   },
   {
     id: 'createdAt',
     label: 'Created at',
     minWidth: 170,
     align: 'right',
-    format: (value) => (new Date(Number(value))).toLocaleString(),
+    format: (value) => new Date(Number(value)).toLocaleString(),
   },
 ];
 
 export default function PostsListPage() {
   const [rowsPerPage, setRowsPerPage] = useState(25);
-  const [ anchorEl, setAnchorEl ] = useState<null | Element>(null);
+  const [anchorEl, setAnchorEl] = useState<null | Element>(null);
   const [selectedPost, setSelectedPost] = useState<string | null>(null);
   const isPostMenuOpen = anchorEl !== null;
   const classes = styles();
   const history = useHistory();
 
-  const { data, loading, fetchMore } = useQuery<ListPosts, { limit?: number, page?: number }>(LIST_POSTS, { variables: { limit: rowsPerPage } });
+  const { data, loading, fetchMore } = useQuery<ListPosts, { limit?: number; page?: number }>(LIST_POSTS, {
+    variables: { limit: rowsPerPage },
+  });
 
   const handleOpenUserMenu = (event: MouseEvent<HTMLElement>, postId: string) => {
     setAnchorEl(event.currentTarget);
     setSelectedPost(postId);
-  }
+  };
 
   const handleCloseUserMenu = () => {
     setAnchorEl(null);
     setSelectedPost(null);
-  }
+  };
 
   const handleDeletePost = () => {
     console.log(selectedPost);
-  }
+  };
 
   const handleEditPost = () => {
     history.push(`/post/edit/${selectedPost}`);
-  }
+  };
 
   if (loading) {
-    return <Loader />
+    return <Loader />;
   }
 
   if (!data) {
-    return <h2>Something went wrong</h2>
+    return <h2>Something went wrong</h2>;
   }
 
   const handleChangePage = async (event: unknown, newPage: number) => {
     return fetchMore({
-      variables: { limit: rowsPerPage, page: newPage + 1 }
+      variables: { limit: rowsPerPage, page: newPage + 1 },
     });
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(+event.target.value);
     return fetchMore({
-      variables: { limit: +event.target.value, page: 1 }
+      variables: { limit: +event.target.value, page: 1 },
     });
   };
 
@@ -106,14 +117,11 @@ export default function PostsListPage() {
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                >
+                <TableCell key={column.id} align={column.align}>
                   {column.label}
                 </TableCell>
               ))}
-              <TableCell align="right" width="80px"/>
+              <TableCell align="right" width="80px" />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -128,7 +136,11 @@ export default function PostsListPage() {
                       </TableCell>
                     );
                   })}
-                  <TableCell align="right"><IconButton onClick={(event) => handleOpenUserMenu(event, row.id)}><MoreVertIcon /></IconButton></TableCell>
+                  <TableCell align="right">
+                    <IconButton onClick={(event) => handleOpenUserMenu(event, row.id)}>
+                      <MoreVertIcon />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               );
             })}
@@ -145,7 +157,7 @@ export default function PostsListPage() {
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
       <Menu
-        id={`post-menu`}
+        id="post-menu"
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'bottom',
