@@ -1,15 +1,18 @@
 import React, { MouseEvent, useState } from 'react';
 import {
   AppBar,
-  Avatar, createStyles,
-  IconButton, makeStyles,
+  Avatar, createStyles, Divider,
+  IconButton, ListItemIcon, ListItemText, makeStyles,
   Menu,
   MenuItem,
   Theme,
   Toolbar,
   Typography,
 } from '@material-ui/core';
+import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import { config } from '../config';
+import { Link } from 'react-router-dom';
+import NoteAddIcon from '@material-ui/icons/NoteAdd';
 
 interface NavbarProps {
   avatarUrl?: string;
@@ -68,7 +71,19 @@ export default function PrimaryAppBar(props: NavbarProps) {
         open={isUserMenuOpen}
         onClose={handleCloseUserMenu}
       >
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        <MenuItem component={Link} to="/post/new" onClick={handleCloseUserMenu}>
+          <ListItemIcon>
+            <NoteAddIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="New post" />
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleLogout}>
+          <ListItemIcon>
+            <PowerSettingsNewIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Logout" />
+        </MenuItem>
       </Menu>
     </Toolbar>
   </AppBar>
