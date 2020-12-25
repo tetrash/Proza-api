@@ -1,13 +1,4 @@
-import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  makeStyles,
-  Theme,
-  Toolbar,
-} from '@material-ui/core';
+import { Drawer, List, ListItem, ListItemIcon, ListItemText, makeStyles, Theme, Toolbar } from '@material-ui/core';
 import { NavLink } from 'react-router-dom';
 import React from 'react';
 
@@ -31,34 +22,36 @@ const styles = makeStyles((theme: Theme) => ({
     width: drawerWidth,
   },
   active: {
-    backgroundColor: theme.palette.action.selected
+    backgroundColor: theme.palette.action.selected,
   },
 }));
 
 interface PrimaryNavProps {
-  pages: { url: string, name: string, icon: any }[]
+  pages: { url: string; name: string; icon: any }[];
 }
 
 export default function PrimaryNav({ pages }: PrimaryNavProps) {
   const classes = styles();
 
-  return <div className={classes.drawerContainer}>
-    <Drawer
-      className={classes.drawer}
-      variant="permanent"
-      classes={{
-        paper: classes.drawerPaper,
-      }}
-    >
-      <Toolbar />
-      <List>
-        {pages.map(page => (
-          <ListItem button key={page.name} component={NavLink} to={page.url} exact activeClassName={classes.active}>
+  return (
+    <div className={classes.drawerContainer}>
+      <Drawer
+        className={classes.drawer}
+        variant="permanent"
+        classes={{
+          paper: classes.drawerPaper,
+        }}
+      >
+        <Toolbar />
+        <List>
+          {pages.map((page) => (
+            <ListItem button key={page.name} component={NavLink} to={page.url} exact activeClassName={classes.active}>
               <ListItemIcon>{page.icon}</ListItemIcon>
               <ListItemText primary={page.name} />
-          </ListItem>
-        ))}
-      </List>
-    </Drawer>
-  </div>;
+            </ListItem>
+          ))}
+        </List>
+      </Drawer>
+    </div>
+  );
 }

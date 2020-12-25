@@ -2,24 +2,24 @@ import React, { FormEvent } from 'react';
 import { Button, makeStyles, TextField } from '@material-ui/core';
 import MDEditor from '@uiw/react-md-editor';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   submitBtn: {
     'margin-left': '24px',
-    'white-space': 'nowrap'
+    'white-space': 'nowrap',
   },
   titleDiv: {
     width: '100%',
     'margin-bottom': '24px',
-    display: 'inline-flex'
+    display: 'inline-flex',
   },
   titleInput: {
     width: '100%',
-  }
+  },
 }));
 
 interface PostFormProps {
-  initState?: Partial<{ title: string, body: string }>,
-  onSubmit: (payload: { title: string, body: string }) => any,
+  onSubmit: (payload: { title: string; body: string }) => unknown;
+  initState?: Partial<{ title: string; body: string }>;
 }
 
 export default function PostForm({ onSubmit, initState }: PostFormProps) {
@@ -31,25 +31,25 @@ export default function PostForm({ onSubmit, initState }: PostFormProps) {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
     return onSubmit({ title, body });
-  }
+  };
 
-  return <form id="create-post-form" onSubmit={handleSubmit}>
-    <div className={classes.titleDiv}>
-      <TextField
-        required
-        id="title"
-        label="Title"
-        autoFocus={true}
-        onChange={(event) => setTitle(event.target.value)}
-        value={title}
-        className={classes.titleInput}
-      />
-      <Button type="submit" form="create-post-form" variant="contained" color="primary" className={classes.submitBtn}>Save post</Button>
-    </div>
-    <MDEditor
-      value={body}
-      onChange={value => setBody(value || '')}
-      height={editorHeight}
-    />
-  </form>
+  return (
+    <form id="create-post-form" onSubmit={handleSubmit}>
+      <div className={classes.titleDiv}>
+        <TextField
+          required
+          id="title"
+          label="Title"
+          autoFocus
+          onChange={(event) => setTitle(event.target.value)}
+          value={title}
+          className={classes.titleInput}
+        />
+        <Button type="submit" form="create-post-form" variant="contained" color="primary" className={classes.submitBtn}>
+          Save post
+        </Button>
+      </div>
+      <MDEditor value={body} onChange={(value) => setBody(value || '')} height={editorHeight} />
+    </form>
+  );
 }
