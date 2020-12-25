@@ -51,4 +51,8 @@ export class PostsMongodbAdapter implements PostRepository {
   generateId(): string {
     return v4();
   }
+
+  async deletePost(postId: string): Promise<void> {
+    await this.PostModel.deleteOne({ _id: postId });
+  }
 }

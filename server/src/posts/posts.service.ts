@@ -9,6 +9,7 @@ import { HasRole } from '../common/decorators/hasRole';
 import { UserRole } from '../users/domain/user';
 import { NotAuthenticatedError } from '../common/errors/errors';
 import { PostRepository } from './domain/repository';
+import { DeletePostDto } from './dto/deletePost.dto';
 
 export class PostsService {
   constructor(private readonly postRepo: PostRepository) {}
@@ -34,5 +35,16 @@ export class PostsService {
     const post: Post = newPost({ ...payload, id, author: ctx.user.id });
     await this.postRepo.createPost(post);
     return post;
+  }
+
+  @HasRole([UserRole.admin, UserRole.moderator])
+  @Validate(DeletePostDto)
+  async deletePost(payload: DeletePostDto, ctx: ServiceContext): Promise<boolean> {
+    if (!ctx.user) {
+      throw new NotAuthenticatedError();
+    }
+
+    await this.postRepo.deletePost(payload.postId);
+    return true;
   }
 }

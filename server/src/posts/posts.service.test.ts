@@ -1,7 +1,8 @@
-import { Post, PostRepository } from './domain/post';
+import { Post } from './domain/post';
 import { PostsService } from './posts.service';
 import { mock } from 'jest-mock-extended';
 import { DomainPaginationResult } from '../common/interfaces/domainPaginationResult';
+import { PostRepository } from './domain/repository';
 
 describe('posts service', () => {
   const postsRepo = mock<PostRepository>();
@@ -61,6 +62,14 @@ describe('posts service', () => {
           updatedAt: expect.any(Date),
         }),
       );
+    });
+  });
+
+  describe('deletePost', () => {
+    it('should delete post', async () => {
+      postsRepo.deletePost.mockResolvedValue(undefined);
+      const result = service.deletePost({ postId: 'postId' }, { user: { id: 'str', role: 'admin' } as any });
+      await expect(result).resolves.toEqual(true);
     });
   });
 });
