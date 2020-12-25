@@ -12,7 +12,8 @@
     "test:server": "cd server && yarn test",
     "test": "yarn test:server",
     "lint:server": "cd server && yarn lint",
-    "lint": "yarn lint:server",
+    "lint:dashboard": "cd dashboard && yarn lint",
+    "lint": "yarn lint:server && yarn lint:dashboard",
     "release": "standard-version"
   },
   "workspaces": [
@@ -35,7 +36,10 @@
   },
   "lint-staged": {
     "server/**/*.ts": [
-      "eslint --fix"
+      "yarn lint:server --fix"
+    ],
+    "dashboard/**/*.ts": [
+      "yarn lint:dashboard --fix"
     ]
   }
 }
