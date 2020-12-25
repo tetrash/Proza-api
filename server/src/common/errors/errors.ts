@@ -7,34 +7,38 @@ export enum ErrorType {
 }
 
 export abstract class CustomError extends Error {
-  constructor(public readonly errorDetails?: any, msg?: string) {
-    super(msg || (errorDetails && errorDetails.toString()) || undefined);
+  constructor(msg?: any) {
+    super((msg && msg.toString()) || undefined);
   }
 
   abstract readonly type: ErrorType;
 }
 
 export class IncorrectInputError extends CustomError {
-  errorDetails = 'Incorrect input';
+  message = 'Incorrect input';
   type = ErrorType.IncorrectInput;
 }
 
 export class InternalError extends CustomError {
-  errorDetails = 'Internal error';
+  constructor(public readonly details?: any) {
+    super();
+  }
+
+  message = 'Internal error';
   type = ErrorType.Internal;
 }
 
 export class NotFoundError extends CustomError {
-  errorDetails = 'No results found';
+  message = 'No results found';
   type = ErrorType.NotFound;
 }
 
 export class NotAuthenticatedError extends CustomError {
-  errorDetails = 'User need to be authenticated to perform this action';
+  message = 'User need to be authenticated to perform this action';
   type = ErrorType.NotAuthenticated;
 }
 
 export class NotAuthorizedError extends CustomError {
-  errorDetails = 'User is not authorized to perform this action';
+  message = 'User is not authorized to perform this action';
   type = ErrorType.NotAuthorized;
 }

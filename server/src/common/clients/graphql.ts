@@ -1,5 +1,5 @@
 import express from 'express';
-import { ApolloServer, IResolvers } from 'apollo-server-express';
+import { ApolloError, ApolloServer, IResolvers } from 'apollo-server-express';
 import { addResolversToSchema, GraphQLFileLoader, loadSchemaSync, mergeResolvers } from 'graphql-tools';
 import { Config } from '../config/config';
 import { Logger } from '../logger/logger';
@@ -13,6 +13,7 @@ import { createUserRouter } from '../../users/ports/express';
 import { usersResolver } from '../../users/ports/graphql';
 import { Connection } from 'mongoose';
 import mongoStoreFactory from 'connect-mongo';
+import { CustomError, InternalError } from '../errors/errors';
 
 export interface ApolloContext {
   user?: User;
@@ -60,6 +61,16 @@ export class GraphqlServer {
           user,
           session: context.req.session,
         };
+      },
+      formatError: (error) => {
+        const originalErr = error.originalError as Error | CustomError;
+        let err: CustomError = new InternalError(originalErr.message);
+
+        if (originalErr instanceof CustomError && originalErr.type) {
+          err = originalErr;
+        }
+
+        return new ApolloError(err.message, err.type);
       },
     });
   }
