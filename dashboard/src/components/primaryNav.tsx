@@ -1,4 +1,4 @@
-  import {
+import {
   Drawer,
   List,
   ListItem,
@@ -8,8 +8,8 @@
   Theme,
   Toolbar,
 } from '@material-ui/core';
-import DescriptionIcon from '@material-ui/icons/Description';
 import { NavLink } from 'react-router-dom';
+import React from 'react';
 
 const drawerWidth = 240;
 
@@ -35,11 +35,11 @@ const styles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function PrimaryNav() {
-  const pages = [
-    { url: '/posts', name: 'Posts', icon: <DescriptionIcon /> }
-  ]
+interface PrimaryNavProps {
+  pages: { url: string, name: string, icon: any }[]
+}
 
+export default function PrimaryNav({ pages }: PrimaryNavProps) {
   const classes = styles();
 
   return <div className={classes.drawerContainer}>
