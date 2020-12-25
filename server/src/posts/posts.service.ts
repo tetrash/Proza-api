@@ -1,4 +1,4 @@
-import { newPost, Post, PostRepository } from './domain/post';
+import { newPost, Post } from './domain/post';
 import { Validate } from '../common/decorators/validate';
 import { GetPostDto } from './dto/getPost.dto';
 import { ListPostsDto } from './dto/listPosts.dto';
@@ -8,6 +8,7 @@ import { ServiceContext } from '../common/interfaces/serviceContext';
 import { HasRole } from '../common/decorators/hasRole';
 import { UserRole } from '../users/domain/user';
 import { NotAuthenticatedError } from '../common/errors/errors';
+import { PostRepository } from './domain/repository';
 
 export class PostsService {
   constructor(private readonly postRepo: PostRepository) {}
