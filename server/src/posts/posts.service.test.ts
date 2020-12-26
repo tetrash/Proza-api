@@ -1,4 +1,4 @@
-import { Post } from './domain/post';
+import { newPost, Post } from './domain/post';
 import { PostsService } from './posts.service';
 import { mock } from 'jest-mock-extended';
 import { DomainPaginationResult } from '../common/interfaces/domainPaginationResult';
@@ -70,6 +70,23 @@ describe('posts service', () => {
       postsRepo.deletePost.mockResolvedValue(undefined);
       const result = service.deletePost({ postId: 'postId' }, { user: { id: 'str', role: 'admin' } as any });
       await expect(result).resolves.toEqual(true);
+    });
+  });
+
+  describe('updatePost', () => {
+    it('should update post', async () => {
+      const post = newPost({ id: 'postId' });
+      postsRepo.updatePost.mockResolvedValue(undefined);
+      postsRepo.getPost.mockResolvedValue(post);
+
+      const result = service.updatePost(
+        { id: 'postId', title: 'title' },
+        { user: { id: 'str', role: 'admin' } as any },
+      );
+
+      await expect(result).resolves.toEqual(post);
+      expect(postsRepo.updatePost).toHaveBeenCalledWith({ id: 'postId', title: 'title', updatedAt: expect.any(Date) });
+      expect(postsRepo.getPost).toHaveBeenCalledWith('postId');
     });
   });
 });
