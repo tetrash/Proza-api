@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import React from 'react';
 import { useQuery } from '@apollo/client';
-import { GET_POST, GetPostResult } from '../graphql/queries';
+import { GET_POST, GetPostResult } from '../graphql/post.queries';
 import Loader from '../components/loader';
 import PostForm from '../components/postForm';
 

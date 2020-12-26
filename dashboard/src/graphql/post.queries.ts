@@ -1,29 +1,5 @@
 import { gql } from '@apollo/client';
 
-export const GET_USER_DATA = gql`
-  query getUserData {
-    me {
-      id
-      email
-      username
-      fullName
-      avatarUrl
-      role
-    }
-  }
-`;
-
-export interface GetUserData {
-  me: {
-    id: string;
-    email?: string;
-    username?: string;
-    fullName?: string;
-    avatarUrl?: string;
-    role: string;
-  };
-}
-
 export const LIST_POSTS = gql`
   query ListPosts($page: Int, $limit: Int) {
     listPosts(paginate: { page: $page, limit: $limit }) {
@@ -69,20 +45,6 @@ export interface ListPosts {
     nextPage?: number;
     totalItems: number;
     totalPages: number;
-  };
-}
-
-export const CREATE_POST = gql`
-  mutation CreatePost($title: String!, $body: String!) {
-    createPost(post: { title: $title, body: $body }) {
-      id
-    }
-  }
-`;
-
-export interface CreatePostResult {
-  createPost: {
-    id: string;
   };
 }
 
