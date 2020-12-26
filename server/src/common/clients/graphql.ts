@@ -13,7 +13,7 @@ import { createUserRouter } from '../../users/ports/express';
 import { usersResolver } from '../../users/ports/graphql';
 import { Connection } from 'mongoose';
 import mongoStoreFactory from 'connect-mongo';
-import { CustomError, InternalError } from '../errors/errors';
+import { CustomError, ErrorType, InternalError } from '../errors/errors';
 
 export interface ApolloContext {
   user?: User;
@@ -68,6 +68,12 @@ export class GraphqlServer {
 
         if (originalErr instanceof CustomError && originalErr.type) {
           err = originalErr;
+        }
+
+        if (err.type === ErrorType.Internal) {
+          this.logger.error(err.stack || err.message);
+        } else {
+          this.logger.debug(err.message);
         }
 
         return new ApolloError(err.message, err.type);
