@@ -93,6 +93,25 @@ describe('posts mongodb adapter', () => {
     });
   });
 
+  describe('deletePost', () => {
+    it('should delete post', async () => {
+      jest.spyOn(postModel, 'deleteOne').mockResolvedValue({});
+      await expect(adapter.deletePost('id')).resolves.not.toThrow();
+      expect(postModel.deleteOne).toHaveBeenCalledWith({ _id: 'id' });
+    });
+  });
+
+  describe('updatePost', () => {
+    it('should update post', async () => {
+      const payload: Post = newPost({ id: 'id' });
+
+      jest.spyOn(postModel, 'updateOne').mockResolvedValue({});
+      await expect(adapter.updatePost(payload)).resolves.not.toThrow();
+      const { id, ...result } = payload;
+      expect(postModel.updateOne).toHaveBeenCalledWith({ _id: id }, { $set: result });
+    });
+  });
+
   describe('generateId', () => {
     it('should return id', () => {
       expect(adapter.generateId()).toEqual(expect.any(String));

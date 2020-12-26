@@ -22,22 +22,29 @@ type PostListResult implements Pagination {
   page: Int!
 }
 
-input PostListPagination {
+input PostListPaginationInput {
   limit: Int
   page: Int
 }
 
-input createPost {
+input createPostInput {
   title: String!
   body: String
 }
 
+input updatePostInput {
+  id: String!
+  title: String
+  body: String
+}
+
 type Query {
-  listPosts(paginate: PostListPagination): PostListResult
+  listPosts(paginate: PostListPaginationInput): PostListResult
   getPost(postId: String): Post
 }
 
 type Mutation {
-  createPost(post: createPost!): Post
+  createPost(post: createPostInput!): Post
   deletePost(postId: String!): Boolean
+  updatePost(post: updatePostInput): Post
 }
