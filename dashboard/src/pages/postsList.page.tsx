@@ -13,12 +13,11 @@ import {
   TablePagination,
   TableRow,
 } from '@material-ui/core';
-import { useMutation, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useHistory } from 'react-router-dom';
 import Loader from '../components/loader';
 import { LIST_POSTS, ListPosts, PostAuthor, Post } from '../graphql/post.queries';
-import { DELETE_POST, DeletePostInput, DeletePostResult } from '../graphql/post.mutations';
 
 const styles = makeStyles((theme) => ({
   content: {
@@ -68,11 +67,9 @@ export default function PostsListPage() {
   const classes = styles();
   const history = useHistory();
 
-  const { data, loading, fetchMore, refetch } = useQuery<ListPosts, { limit?: number; page?: number }>(LIST_POSTS, {
+  const { data, loading, fetchMore } = useQuery<ListPosts, { limit?: number; page?: number }>(LIST_POSTS, {
     variables: { limit: rowsPerPage },
   });
-
-  const [deletePost] = useMutation<DeletePostResult, DeletePostInput>(DELETE_POST);
 
   const handleOpenUserMenu = (event: MouseEvent<HTMLElement>, postId: string) => {
     setAnchorEl(event.currentTarget);
@@ -84,13 +81,8 @@ export default function PostsListPage() {
     setSelectedPost(null);
   };
 
-  const handleDeletePost = async () => {
-    handleCloseUserMenu();
-    if (!selectedPost) {
-      return;
-    }
-    await deletePost({ variables: { postId: selectedPost } });
-    await refetch();
+  const handleDeletePost = () => {
+    console.log(selectedPost);
   };
 
   const handleEditPost = () => {
