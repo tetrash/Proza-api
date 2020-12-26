@@ -10,9 +10,9 @@ import Loader from './components/loader';
 import AccessDenied from './components/accessDenied';
 import LoginPage from './pages/login.page';
 import PrimaryAppBar from './components/primaryAppBar';
-import { GET_USER_DATA, GetUserData } from './graphql/queries';
 import CreatePostPage from './pages/createPost.page';
 import EditPostPage from './pages/editPost.page';
+import { GET_USER_DATA, GetUserData } from './graphql/user.queries';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

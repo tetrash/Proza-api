@@ -17,7 +17,7 @@ import { useQuery } from '@apollo/client';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useHistory } from 'react-router-dom';
 import Loader from '../components/loader';
-import { LIST_POSTS, ListPosts, PostAuthor, Post } from '../graphql/queries';
+import { LIST_POSTS, ListPosts, PostAuthor, Post } from '../graphql/post.queries';
 
 const styles = makeStyles((theme) => ({
   content: {
