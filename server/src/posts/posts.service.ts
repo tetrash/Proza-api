@@ -1,4 +1,4 @@
-import { newPost, Post } from './domain/post';
+import { newPost, Post, updatePost } from './domain/post';
 import { Validate } from '../common/decorators/validate';
 import { GetPostDto } from './dto/getPost.dto';
 import { ListPostsDto } from './dto/listPosts.dto';
@@ -10,6 +10,7 @@ import { UserRole } from '../users/domain/user';
 import { NotAuthenticatedError } from '../common/errors/errors';
 import { PostRepository } from './domain/repository';
 import { DeletePostDto } from './dto/deletePost.dto';
+import { UpdatePostDto } from './dto/updatePost.dto';
 
 export class PostsService {
   constructor(private readonly postRepo: PostRepository) {}
@@ -46,5 +47,18 @@ export class PostsService {
 
     await this.postRepo.deletePost(payload.postId);
     return true;
+  }
+
+
+  @HasRole([UserRole.admin, UserRole.moderator])
+  @Validate(UpdatePostDto)
+  async updatePost(payload: UpdatePostDto, ctx: ServiceContext): Promise<Post> {
+    if (!ctx.user) {
+      throw new NotAuthenticatedError();
+    }
+
+    const updatedPost = updatePost(payload);
+    await this.postRepo.updatePost(updatedPost);
+    return this.postRepo.getPost(payload.id);
   }
 }

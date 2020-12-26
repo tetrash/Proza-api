@@ -22,5 +22,8 @@ export const postsResolver: IResolvers<any, ApolloContext> = {
     deletePost: (source, args, context) => {
       return postService.deletePost({ postId: args.postId }, { user: context.user });
     },
+    updatePost: (source, args, context) => {
+      return postService.updatePost(args.post, { user: context.user });
+    },
   },
 };

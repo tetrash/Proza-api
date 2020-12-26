@@ -1,4 +1,4 @@
-import { Post } from '../domain/post';
+import { Post, UpdatedPost } from '../domain/post';
 import { getModelForClass } from '@typegoose/typegoose';
 import { PostEntity, PostEntityMapper } from '../entities/post.entity';
 import { DomainPaginationResult } from '../../common/interfaces/domainPaginationResult';
@@ -54,5 +54,10 @@ export class PostsMongodbAdapter implements PostRepository {
 
   async deletePost(postId: string): Promise<void> {
     await this.PostModel.deleteOne({ _id: postId });
+  }
+
+  async updatePost(post: UpdatedPost): Promise<void> {
+    const { id, ...body } = post;
+    await this.PostModel.updateOne({ _id: id }, { $set: body });
   }
 }
