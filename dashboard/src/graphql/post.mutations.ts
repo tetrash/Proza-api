@@ -1,5 +1,10 @@
 import { gql } from '@apollo/client';
 
+export interface CreatePostInput {
+  title: string;
+  body: string;
+}
+
 export const CREATE_POST = gql`
   mutation CreatePost($title: String!, $body: String!) {
     createPost(post: { title: $title, body: $body }) {

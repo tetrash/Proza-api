@@ -2,11 +2,11 @@ import React from 'react';
 import { useMutation } from '@apollo/client';
 import { Redirect } from 'react-router-dom';
 import Loader from '../components/loader';
-import PostForm from '../components/postForm';
-import { CREATE_POST, CreatePostResult } from '../graphql/post.mutations';
+import PostsForm from '../components/postsForm';
+import { CREATE_POST, CreatePostInput, CreatePostResult } from '../graphql/post.mutations';
 
 export default function CreatePostPage() {
-  const [createPost, { data, loading }] = useMutation<CreatePostResult, { title: string; body: string }>(CREATE_POST);
+  const [createPost, { data, loading }] = useMutation<CreatePostResult, CreatePostInput>(CREATE_POST);
 
   if (loading) {
     return <Loader />;
@@ -20,5 +20,5 @@ export default function CreatePostPage() {
     return createPost({ variables: payload });
   };
 
-  return <PostForm onSubmit={handleSubmit} />;
+  return <PostsForm onSubmit={handleSubmit} />;
 }

@@ -1,5 +1,10 @@
 import React, { MouseEvent, useState } from 'react';
 import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   makeStyles,
   Menu,
@@ -12,6 +17,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Typography,
 } from '@material-ui/core';
 import { useMutation, useQuery } from '@apollo/client';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -64,6 +70,7 @@ export default function PostsListPage() {
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [anchorEl, setAnchorEl] = useState<null | Element>(null);
   const [selectedPost, setSelectedPost] = useState<string | null>(null);
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
   const isPostMenuOpen = anchorEl !== null;
   const classes = styles();
   const history = useHistory();
@@ -84,6 +91,16 @@ export default function PostsListPage() {
     setSelectedPost(null);
   };
 
+  const handleClickOpenDialog = () => {
+    setAnchorEl(null);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setSelectedPost(null);
+  };
+
   const handleDeletePost = async () => {
     handleCloseUserMenu();
     if (!selectedPost) {
@@ -91,19 +108,12 @@ export default function PostsListPage() {
     }
     await deletePost({ variables: { postId: selectedPost } });
     await refetch();
+    handleCloseDialog();
   };
 
   const handleEditPost = () => {
     history.push(`/post/edit/${selectedPost}`);
   };
-
-  if (loading) {
-    return <Loader />;
-  }
-
-  if (!data) {
-    return <h2>Something went wrong</h2>;
-  }
 
   const handleChangePage = async (event: unknown, newPage: number) => {
     return fetchMore({
@@ -117,6 +127,14 @@ export default function PostsListPage() {
       variables: { limit: +event.target.value, page: 1 },
     });
   };
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!data) {
+    return <h2>Something went wrong</h2>;
+  }
 
   return (
     <Paper className={classes.content}>
@@ -181,8 +199,22 @@ export default function PostsListPage() {
         onClose={handleCloseUserMenu}
       >
         <MenuItem onClick={handleEditPost}>Edit post</MenuItem>
-        <MenuItem onClick={handleDeletePost}>Delete post</MenuItem>
+        <MenuItem onClick={handleClickOpenDialog}>Delete post</MenuItem>
       </Menu>
+      <Dialog onClose={handleCloseDialog} aria-labelledby="customized-dialog-title" open={openDialog}>
+        <DialogTitle id="customized-dialog-title">Delete post</DialogTitle>
+        <DialogContent>
+          <Typography gutterBottom>This post will be deleted permanently. This action is irreversible!</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button autoFocus onClick={handleDeletePost} color="primary">
+            Confirm
+          </Button>
+          <Button autoFocus onClick={handleCloseDialog} color="secondary">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 }
