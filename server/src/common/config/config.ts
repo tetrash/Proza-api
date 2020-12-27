@@ -1,4 +1,4 @@
-import { IsArray, IsIn, IsInt, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsIn, IsInt, IsString, IsUrl, ValidateNested } from 'class-validator';
 import { MongodbConfig } from './mongodbConfig';
 import { AuthConfig } from './authConfig';
 
@@ -9,6 +9,16 @@ export class Config {
 
   @IsInt()
   port: number = Number(process.env.PORT) || 4000;
+
+  @IsUrl({
+    require_protocol: true,
+    require_valid_protocol: true,
+    require_host: true,
+    allow_protocol_relative_urls: false,
+    protocols: ['http', 'https'],
+    require_tld: false,
+  })
+  domain: string = process.env.PROZA_DOMAIN || `http://localhost:${this.port}`;
 
   @IsIn(['debug', 'info', 'warn', 'error', 'http'])
   logLevel: string = process.env.LOG_LEVEL || 'http';

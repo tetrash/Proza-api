@@ -8,6 +8,10 @@ export default function LoginPage() {
     window.location.assign(`${config.backendDomain}/auth/github?redirectTo=${config.dashboardDomain}`);
   };
 
+  const handleOidcLogin = () => {
+    window.location.assign(`${config.backendDomain}/auth/oidc?redirectTo=${config.dashboardDomain}`);
+  };
+
   return (
     <Grid container spacing={0} direction="column" alignItems="center" justify="center" style={{ minHeight: '100vh' }}>
       <Typography variant="h5">Proza admin dashboard - login</Typography>
@@ -20,6 +24,16 @@ export default function LoginPage() {
         onClick={handleGithubLogin}
       >
         Login with github
+      </Button>
+      <Button
+        variant="contained"
+        style={{ backgroundColor: '#333333' }}
+        color="primary"
+        size="large"
+        startIcon={<GitHubIcon />}
+        onClick={handleOidcLogin}
+      >
+        Login with oidc
       </Button>
     </Grid>
   );

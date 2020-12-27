@@ -15,6 +15,7 @@ import { Connection } from 'mongoose';
 import mongoStoreFactory from 'connect-mongo';
 import { CustomError, ErrorType, InternalError } from '../errors/errors';
 import { createAuthRouter } from '../../users/ports/authExpress';
+import { createUserOidcAuthRouter } from '../../users/ports/oidcAuthExpress';
 
 export interface ApolloContext {
   user?: User;
@@ -103,6 +104,17 @@ export class GraphqlServer {
     this.app.use(path, githubRouter);
   }
 
+  private async setupOidcAuth() {
+    const path = `${this.config.auth.authPrefixPath}/oidc`;
+    this.logger.info('Setting up oidc user authentication');
+    this.logger.debug(`Oidc auth path ${path}`);
+    const oidcRouter = await createUserOidcAuthRouter(
+      this.config.auth.oidcAuth,
+      `${this.config.domain}${path}/callback`,
+    );
+    this.app.use(path, oidcRouter);
+  }
+
   private setupExpressSession() {
     const MongoStore = mongoStoreFactory(session);
     this.app.use(
@@ -132,6 +144,10 @@ export class GraphqlServer {
 
     if (this.config.auth.isGithubAuth) {
       this.setupGithubAuth();
+    }
+
+    if (this.config.auth.isOidcAuth) {
+      await this.setupOidcAuth();
     }
 
     this.setupLogout();
