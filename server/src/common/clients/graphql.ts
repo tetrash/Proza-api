@@ -9,11 +9,12 @@ import * as bodyParser from 'body-parser';
 import session, { Session } from 'express-session';
 import { postsResolver } from '../../posts/ports/graphql';
 import { User } from '../../users/domain/user';
-import { createUserRouter } from '../../users/ports/express';
+import { createUserGithubAuthRouter } from '../../users/ports/githubAuthExpress';
 import { usersResolver } from '../../users/ports/graphql';
 import { Connection } from 'mongoose';
 import mongoStoreFactory from 'connect-mongo';
 import { CustomError, ErrorType, InternalError } from '../errors/errors';
+import { createAuthRouter } from '../../users/ports/authExpress';
 
 export interface ApolloContext {
   user?: User;
@@ -73,7 +74,7 @@ export class GraphqlServer {
         if (err.type === ErrorType.Internal) {
           this.logger.error(err.stack || err.message);
         } else {
-          this.logger.debug(err.message);
+          this.logger.debug(err.stack || err.message);
         }
 
         return new ApolloError(err.message, err.type);
@@ -87,10 +88,19 @@ export class GraphqlServer {
     });
   }
 
-  private setupOAuth2() {
-    this.logger.info('Setting up oauth2 client');
-    const userRouter = createUserRouter(this.config.auth.oauth2);
-    this.app.use('/auth', userRouter);
+  private setupLogout() {
+    const path = `${this.config.auth.authPrefixPath}`;
+    this.logger.debug(`Setting auth router at path ${path}`);
+    const authRouter = createAuthRouter();
+    this.app.use(path, authRouter);
+  }
+
+  private setupGithubAuth() {
+    const path = `${this.config.auth.authPrefixPath}/github`;
+    this.logger.info('Setting up github oauth2 user authentication');
+    this.logger.debug(`Github auth path ${path}`);
+    const githubRouter = createUserGithubAuthRouter(this.config.auth.githubAuth);
+    this.app.use(path, githubRouter);
   }
 
   private setupExpressSession() {
@@ -120,9 +130,11 @@ export class GraphqlServer {
     this.app.use(bodyParser.json());
     this.setupExpressSession();
 
-    if (this.config.auth.isOAuth2Enabled) {
-      this.setupOAuth2();
+    if (this.config.auth.isGithubAuth) {
+      this.setupGithubAuth();
     }
+
+    this.setupLogout();
 
     this.gqlServer.applyMiddleware({ app: this.app, cors: { credentials: true, origin: true } });
 

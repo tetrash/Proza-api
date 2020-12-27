@@ -5,7 +5,7 @@ import { config } from '../config';
 
 export default function LoginPage() {
   const handleGithubLogin = () => {
-    window.location.assign(`${config.backendDomain}/auth/oauth2?redirectTo=${config.dashboardDomain}`);
+    window.location.assign(`${config.backendDomain}/auth/github?redirectTo=${config.dashboardDomain}`);
   };
 
   return (
