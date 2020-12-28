@@ -5,6 +5,7 @@ export interface User {
   username: string;
   fullName?: string;
   openid?: string;
+  openidSource?: string;
   email?: string;
   avatarUrl?: string;
   role: UserRole | string;
@@ -27,6 +28,10 @@ export function newUser(payload: Partial<User>): User {
     throw new IncorrectInputError('User is missing username field');
   }
 
+  if (payload.openid && !payload.openidSource) {
+    throw new IncorrectInputError('Openid is defined but openid source is missing');
+  }
+
   return {
     id: payload.id,
     username: payload.username,
@@ -34,6 +39,7 @@ export function newUser(payload: Partial<User>): User {
     avatarUrl: payload.avatarUrl,
     email: payload.email,
     openid: payload.openid,
+    openidSource: payload.openidSource,
     role: payload.role || UserRole.user,
     createdAt: new Date(),
     updatedAt: new Date(),

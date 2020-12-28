@@ -60,6 +60,7 @@ export const createUserOidcAuthRouter = async (config: OidcAuthConfig, redirectU
         username: data.preferred_username || data.username || data.name,
         avatarUrl: data.avatar_url,
         openid: (data.id && data.toString()) || data.sub,
+        openidSource: 'oidc',
       });
 
       req.session.accessToken = token.accessToken;

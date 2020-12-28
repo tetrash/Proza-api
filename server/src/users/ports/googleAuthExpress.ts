@@ -46,14 +46,13 @@ export const createUserGoogleAuthRouter = async (config: GoogleAuthConfig, redir
 
       const { data } = await axios.request(token.sign(userRequest));
 
-      console.log(data);
-
       const user = await userService.createOrGetUser({
         fullName: data.name,
         email: data.email,
         username: data.preferred_username || data.username || data.name,
         avatarUrl: data.picture,
         openid: data.sub,
+        openidSource: 'google',
       });
 
       req.session.accessToken = token.accessToken;

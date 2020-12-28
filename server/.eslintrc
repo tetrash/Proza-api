@@ -21,6 +21,7 @@
     "jest/prefer-to-have-length": "warn",
     "jest/valid-expect": "error",
     "@typescript-eslint/no-inferrable-types": "off",
-    "@typescript-eslint/no-non-null-assertion": "warn"
+    "@typescript-eslint/no-non-null-assertion": "warn",
+    "no-console": "error"
   }
 }

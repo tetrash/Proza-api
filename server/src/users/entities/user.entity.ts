@@ -1,7 +1,8 @@
-import { modelOptions, prop } from '@typegoose/typegoose';
+import { index, modelOptions, prop } from '@typegoose/typegoose';
 import { DataMapper } from '../../common/interfaces/dataMapper';
 import { User } from '../domain/user';
 
+@index({ openid: 1, openidSource: 1 }, { unique: true })
 @modelOptions({ schemaOptions: { collection: 'users' } })
 export class UserEntity {
   constructor(payload: UserEntity) {
@@ -17,8 +18,11 @@ export class UserEntity {
   @prop()
   fullName?: string;
 
-  @prop({ unique: true })
+  @prop()
   openid?: string;
+
+  @prop()
+  openidSource?: string;
 
   @prop()
   email?: string;
@@ -45,6 +49,7 @@ export class UserEntityMapper implements DataMapper<User, UserEntity> {
       role: entity.role,
       email: entity.email,
       openid: entity.openid,
+      openidSource: entity.openidSource,
       avatarUrl: entity.avatarUrl,
       updatedAt: (entity.updatedAt && new Date(entity.updatedAt)) || new Date(),
       createdAt: (entity.createdAt && new Date(entity.createdAt)) || new Date(),
@@ -59,6 +64,7 @@ export class UserEntityMapper implements DataMapper<User, UserEntity> {
       role: domain.role,
       email: domain.email,
       openid: domain.openid,
+      openidSource: domain.openidSource,
       avatarUrl: domain.avatarUrl,
       updatedAt: domain.updatedAt,
       createdAt: domain.createdAt,

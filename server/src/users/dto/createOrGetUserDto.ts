@@ -31,5 +31,9 @@ export class CreateOrGetUserDto {
 
   @IsString()
   @IsOptional()
+  openidSource?: string;
+
+  @IsString()
+  @IsOptional()
   id?: string;
 }

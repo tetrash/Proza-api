@@ -19,9 +19,11 @@ describe('user domain', () => {
     it('should throw if missing required properties', () => {
       const noId = () => newUser({ username: 'test' });
       const noUsername = () => newUser({ id: 'id' });
+      const noOpenidSource = () => newUser({ id: 'id', username: 'test', openid: 'test' });
 
       expect(noId).toThrow(IncorrectInputError);
       expect(noUsername).toThrow(IncorrectInputError);
+      expect(noOpenidSource).toThrow(IncorrectInputError);
     });
   });
 });

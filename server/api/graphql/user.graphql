@@ -10,6 +10,7 @@ type User {
   fullName: String
   email: String
   openid: String
+  openidSource: String
   role: UserRole
   avatarUrl: String
   createdAt: String
