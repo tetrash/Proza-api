@@ -31,16 +31,20 @@ export const createUserOidcAuthRouter = async (config: OidcAuthConfig, redirectU
 
   const client = new ClientOAuth2(clientConfig);
 
-  router.get('/', (req, res) => {
-    const { redirectTo } = req.query;
-    const uri = client.code.getUri({
-      state: redirectTo ? redirectTo.toString() : undefined,
-      redirectUri,
-    });
-    return res.redirect(uri);
+  router.get('/', (req, res, next) => {
+    try {
+      const { redirectTo } = req.query;
+      const uri = client.code.getUri({
+        state: redirectTo ? redirectTo.toString() : undefined,
+        redirectUri,
+      });
+      return res.redirect(uri);
+    } catch (e) {
+      next(e);
+    }
   });
 
-  router.get('/callback', async (req, res) => {
+  router.get('/callback', async (req, res, next) => {
     try {
       const token = await client.code.getToken(req.originalUrl, { redirectUri });
       const userRequest: { method: 'get'; url: string } = {
@@ -53,7 +57,7 @@ export const createUserOidcAuthRouter = async (config: OidcAuthConfig, redirectU
       const user = await userService.createOrGetUser({
         fullName: data.name,
         email: data.email,
-        username: data.preferred_username,
+        username: data.preferred_username || data.username || data.name,
         avatarUrl: data.avatar_url,
         openid: (data.id && data.toString()) || data.sub,
       });
@@ -67,7 +71,7 @@ export const createUserOidcAuthRouter = async (config: OidcAuthConfig, redirectU
       }
       return res.send();
     } catch (e) {
-      return res.json(e);
+      next(e);
     }
   });
 
