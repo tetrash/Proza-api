@@ -16,6 +16,7 @@ import mongoStoreFactory from 'connect-mongo';
 import { CustomError, ErrorType, InternalError } from '../errors/errors';
 import { createAuthRouter } from '../../users/ports/authExpress';
 import { createUserOidcAuthRouter } from '../../users/ports/oidcAuthExpress';
+import { createUserGoogleAuthRouter } from '../../users/ports/googleAuthExpress';
 
 export interface ApolloContext {
   user?: User;
@@ -115,6 +116,17 @@ export class GraphqlServer {
     this.app.use(path, oidcRouter);
   }
 
+  private async setupGoogleAuth() {
+    const path = `${this.config.auth.authPrefixPath}/google`;
+    this.logger.info('Setting up google user authentication');
+    this.logger.debug(`Google auth path ${path}`);
+    const oidcRouter = await createUserGoogleAuthRouter(
+      this.config.auth.googleAuth,
+      `${this.config.domain}${path}/callback`,
+    );
+    this.app.use(path, oidcRouter);
+  }
+
   private setupExpressSession() {
     const MongoStore = mongoStoreFactory(session);
     this.app.use(
@@ -148,6 +160,10 @@ export class GraphqlServer {
 
     if (this.config.auth.isOidcAuth) {
       await this.setupOidcAuth();
+    }
+
+    if (this.config.auth.isGoogleAuth) {
+      await this.setupGoogleAuth();
     }
 
     this.setupLogout();

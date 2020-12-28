@@ -1,10 +1,12 @@
 import { IsEnum, IsString, ValidateIf, ValidateNested } from 'class-validator';
 import { GithubOAuth2Config } from './githubOAuth2Config';
 import { OidcAuthConfig } from './oidcAuthConfig';
+import { GoogleAuthConfig } from './googleAuthConfig';
 
 export enum AuthType {
   github = 'github',
   oidc = 'oidc',
+  google = 'google',
 }
 
 export class AuthConfig {
@@ -22,6 +24,12 @@ export class AuthConfig {
   oidcAuth: OidcAuthConfig = new OidcAuthConfig();
 
   isOidcAuth = this.type.includes(AuthType.oidc);
+
+  @ValidateNested()
+  @ValidateIf((obj: AuthConfig) => obj.isGoogleAuth)
+  googleAuth: GoogleAuthConfig = new GoogleAuthConfig();
+
+  isGoogleAuth = this.type.includes(AuthType.google);
 
   @IsString()
   sessionSecret: string = process.env.PROZA_AUTH_SESSION_SECRET || 'secret';
