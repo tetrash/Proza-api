@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
+import CloudIcon from '@material-ui/icons/Cloud';
 import { config } from '../config';
 import SocialLoginButton from '../components/socialLoginButton';
 
@@ -14,6 +15,10 @@ export default function LoginPage() {
     window.location.assign(`${config.backendDomain}/auth/oidc?redirectTo=${config.dashboardDomain}`);
   };
 
+  const handleGoogleLogin = () => {
+    window.location.assign(`${config.backendDomain}/auth/google?redirectTo=${config.dashboardDomain}`);
+  };
+
   return (
     <Grid container spacing={0} direction="column" alignItems="center" justify="center" style={{ minHeight: '100vh' }}>
       <Typography variant="h5">Proza admin dashboard - login</Typography>
@@ -23,6 +28,14 @@ export default function LoginPage() {
         backgroundColor="#333333"
         color="white"
         icon={<GitHubIcon />}
+        width="300px"
+      />
+      <SocialLoginButton
+        onClick={handleGoogleLogin}
+        buttonText="Login with Google"
+        backgroundColor="red"
+        color="white"
+        icon={<CloudIcon />}
         width="300px"
       />
       <SocialLoginButton
