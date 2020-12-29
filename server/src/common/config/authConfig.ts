@@ -12,7 +12,10 @@ export enum AuthType {
 }
 
 export class AuthConfig {
-  @IsEnum(AuthType, { each: true })
+  @IsEnum(AuthType, {
+    each: true,
+    message: `incorrect PROZA_AUTH_TYPE variable, available ${Object.values(AuthType).join(', ')}`,
+  })
   type: AuthType[] | string[] = (process.env.PROZA_AUTH_TYPE || '').split(' ');
 
   @ValidateNested()
@@ -39,9 +42,9 @@ export class AuthConfig {
 
   isLinkedinAuth = this.type.includes(AuthType.google);
 
-  @IsString()
+  @IsString({ message: 'missing variable PROZA_AUTH_SESSION_SECRET' })
   sessionSecret: string = process.env.PROZA_AUTH_SESSION_SECRET || 'secret';
 
-  @IsString()
+  @IsString({ message: 'missing variable PROZA_AUTH_PREFIX' })
   authPrefixPath: string = process.env.PROZA_AUTH_PREFIX || '/auth';
 }

@@ -1,9 +1,10 @@
 import { WinstonLogger } from './common/logger/winstonLogger';
 import { Config } from './common/config/config';
-import { validateOrReject } from 'class-validator';
+import { validate } from 'class-validator';
 import { GraphqlServer } from './common/clients/graphql';
 import { connect } from 'mongoose';
 import { config as dotenv } from 'dotenv';
+import { IncorrectInputError } from './common/errors/errors';
 
 dotenv();
 
@@ -11,7 +12,12 @@ const config = new Config();
 const winstonLogger = new WinstonLogger(config.logLevel);
 
 async function init() {
-  await validateOrReject(config);
+  const errors = await validate(config);
+
+  if (errors.length) {
+    throw new IncorrectInputError(errors);
+  }
+
   const mongo = await connect(config.mongodb.url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
