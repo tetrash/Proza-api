@@ -5,17 +5,17 @@ export class MongodbConfig {
     Object.assign(this, params);
   }
 
-  @IsString()
-  url: string = process.env.MONGODB_URL || 'mongodb://localhost:27017/';
+  @IsString({ message: 'missing variable PROZA_MONGODB_URL' })
+  url: string = process.env.PROZA_MONGODB_URL || 'mongodb://localhost:27017/';
 
-  @IsString()
-  dbName: string = process.env.MONGODB_DB_NAME || 'Proza';
+  @IsString({ message: 'missing variable PROZA_MONGODB_DB_NAME' })
+  dbName: string = process.env.PROZA_MONGODB_DB_NAME || 'Proza';
 
-  @IsString()
+  @IsString({ message: 'missing variable PROZA_MONGODB_USER' })
   @IsOptional()
-  user?: string = process.env.MONGODB_USER;
+  user?: string = process.env.PROZA_MONGODB_USER;
 
-  @IsString()
+  @IsString({ message: 'missing variable PROZA_MONGODB_PASSWORD' })
   @IsOptional()
-  password?: string = process.env.MONGODB_PASSWORD;
+  password?: string = process.env.PROZA_MONGODB_PASSWORD;
 }
