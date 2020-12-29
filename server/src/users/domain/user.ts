@@ -49,6 +49,6 @@ export function newUser(payload: Partial<User>): User {
 export interface UserRepository {
   generateId(): string;
   getUser(userId: string): Promise<User>;
-  getUserByOpenid(openid: string): Promise<User | null>;
+  getUserByOpenid(openid: string, openidSource: string): Promise<User | null>;
   createUser(payload: User): Promise<void>;
 }

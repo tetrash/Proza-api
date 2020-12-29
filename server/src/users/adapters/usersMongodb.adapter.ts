@@ -27,8 +27,8 @@ export class UsersMongodbAdapter implements UserRepository {
     return v4();
   }
 
-  async getUserByOpenid(openid: string): Promise<User | null> {
-    const result = await this.userModel.findOne({ openid: { $eq: openid } });
+  async getUserByOpenid(openid: string, openidSource: string): Promise<User | null> {
+    const result = await this.userModel.findOne({ openid: { $eq: openid }, openidSource: { $eq: openidSource } });
     if (!result) {
       return null;
     }
