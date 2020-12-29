@@ -3,6 +3,7 @@ import { Grid, Typography } from '@material-ui/core';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import LockOpenIcon from '@material-ui/icons/LockOpen';
 import CloudIcon from '@material-ui/icons/Cloud';
+import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import { config } from '../config';
 import SocialLoginButton from '../components/socialLoginButton';
 
@@ -17,6 +18,10 @@ export default function LoginPage() {
 
   const handleGoogleLogin = () => {
     window.location.assign(`${config.backendDomain}/auth/google?redirectTo=${config.dashboardDomain}`);
+  };
+
+  const handleLinkedinLogin = () => {
+    window.location.assign(`${config.backendDomain}/auth/linkedin?redirectTo=${config.dashboardDomain}`);
   };
 
   return (
@@ -36,6 +41,14 @@ export default function LoginPage() {
         backgroundColor="red"
         color="white"
         icon={<CloudIcon />}
+        width="300px"
+      />
+      <SocialLoginButton
+        onClick={handleLinkedinLogin}
+        buttonText="Login with Linkedin"
+        backgroundColor="blue"
+        color="white"
+        icon={<LinkedInIcon />}
         width="300px"
       />
       <SocialLoginButton

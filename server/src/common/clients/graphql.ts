@@ -17,6 +17,7 @@ import { CustomError, ErrorType, InternalError } from '../errors/errors';
 import { createAuthRouter } from '../../users/ports/authExpress';
 import { createUserOidcAuthRouter } from '../../users/ports/oidcAuthExpress';
 import { createUserGoogleAuthRouter } from '../../users/ports/googleAuthExpress';
+import { createUserLinkedinAuthRouter } from '../../users/ports/linkedinAuthExpress';
 
 export interface ApolloContext {
   user?: User;
@@ -127,6 +128,17 @@ export class GraphqlServer {
     this.app.use(path, oidcRouter);
   }
 
+  private async setupLinkedinAuth() {
+    const path = `${this.config.auth.authPrefixPath}/linkedin`;
+    this.logger.info('Setting up linkedin user authentication');
+    this.logger.debug(`Linkedin auth path ${path}`);
+    const router = await createUserLinkedinAuthRouter(
+      this.config.auth.linkedinAuth,
+      `${this.config.domain}${path}/callback`,
+    );
+    this.app.use(path, router);
+  }
+
   private setupExpressSession() {
     const MongoStore = mongoStoreFactory(session);
     this.app.use(
@@ -164,6 +176,10 @@ export class GraphqlServer {
 
     if (this.config.auth.isGoogleAuth) {
       await this.setupGoogleAuth();
+    }
+
+    if (this.config.auth.isLinkedinAuth) {
+      await this.setupLinkedinAuth();
     }
 
     this.setupLogout();
