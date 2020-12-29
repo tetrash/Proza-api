@@ -59,6 +59,7 @@ export const createUserGithubAuthRouter = (oauth2Config: GithubOAuth2Config): Ro
       username: data.login,
       avatarUrl: data.avatar_url,
       openid: data.id.toString(),
+      openidSource: 'github',
     });
 
     req.session.accessToken = token.accessToken;
