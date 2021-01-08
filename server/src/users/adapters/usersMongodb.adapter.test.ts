@@ -73,4 +73,15 @@ describe('users mongodb adapter', () => {
       await expect(adapter.getUserByOpenid('', '')).resolves.toEqual(null);
     });
   });
+
+  describe('createOrReplaceUser', () => {
+    it('should create user', async () => {
+      const payload = newUser({ id: 'id', username: 'test' });
+
+      jest.spyOn(userModel, 'findByIdAndUpdate').mockResolvedValue(undefined as any);
+      await expect(adapter.createOrReplaceUser(payload)).resolves.not.toThrow();
+      const { id, ...result } = payload;
+      expect(userModel.findByIdAndUpdate).toHaveBeenCalledWith(id, result, { upsert: true });
+    });
+  });
 });
