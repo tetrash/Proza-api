@@ -1,8 +1,9 @@
 import { Validate } from '../common/decorators/validate';
-import { CreateOrGetUserDto } from './dto/createOrGetUserDto';
+import { CreateOrGetUserDto } from './dto/createOrGetUser.dto';
 import { newUser, User, UserRepository } from './domain/user';
 import { GetUserDto } from './dto/getUser.dto';
 import { IncorrectInputError } from '../common/errors/errors';
+import { CreateOrReplaceUserDto } from './dto/createOrReplaceUser.dto';
 
 export class UsersService {
   constructor(private readonly userRepo: UserRepository) {}
@@ -32,5 +33,12 @@ export class UsersService {
   @Validate(GetUserDto)
   async getUser(payload: GetUserDto): Promise<User> {
     return this.userRepo.getUser(payload.userId);
+  }
+
+  @Validate(CreateOrReplaceUserDto)
+  async createOrReplaceUser(payload: CreateOrReplaceUserDto): Promise<User> {
+    const user = newUser({ ...payload, id: payload.id || this.userRepo.generateId() });
+    await this.userRepo.createOrReplaceUser(user);
+    return user;
   }
 }

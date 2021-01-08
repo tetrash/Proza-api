@@ -21,6 +21,8 @@ async function init() {
   const mongo = await connect(config.mongodb.url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true,
     dbName: config.mongodb.dbName,
     user: config.mongodb.user,
     pass: config.mongodb.password,

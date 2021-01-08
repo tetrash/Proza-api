@@ -18,6 +18,7 @@ import { createAuthRouter } from '../../users/ports/authExpress';
 import { createUserOidcAuthRouter } from '../../users/ports/oidcAuthExpress';
 import { createUserGoogleAuthRouter } from '../../users/ports/googleAuthExpress';
 import { createUserLinkedinAuthRouter } from '../../users/ports/linkedinAuthExpress';
+import { createTestAuthRouter } from '../../users/ports/testAuthExpress';
 
 export interface ApolloContext {
   user?: User;
@@ -139,6 +140,14 @@ export class GraphqlServer {
     this.app.use(path, router);
   }
 
+  private async setupTestAuth() {
+    const path = `${this.config.auth.authPrefixPath}/test`;
+    this.logger.info('Setting up test user authentication');
+    this.logger.debug(`Test auth path ${path}`);
+    const router = await createTestAuthRouter();
+    this.app.use(path, router);
+  }
+
   private setupExpressSession() {
     const MongoStore = mongoStoreFactory(session);
     this.app.use(
@@ -180,6 +189,13 @@ export class GraphqlServer {
 
     if (this.config.auth.isLinkedinAuth) {
       await this.setupLinkedinAuth();
+    }
+
+    if (this.config.auth.isTestAuth) {
+      if (this.config.env !== 'dev') {
+        this.logger.warn('Test authentication is on');
+      }
+      await this.setupTestAuth();
     }
 
     this.setupLogout();

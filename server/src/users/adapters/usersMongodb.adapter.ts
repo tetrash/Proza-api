@@ -34,4 +34,9 @@ export class UsersMongodbAdapter implements UserRepository {
     }
     return this.mapper.toDomain(result);
   }
+
+  async createOrReplaceUser(payload: User): Promise<void> {
+    const { _id, ...user } = this.mapper.toEntity(payload);
+    await this.userModel.findByIdAndUpdate(_id, user, { upsert: true });
+  }
 }
