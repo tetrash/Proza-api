@@ -49,7 +49,6 @@ export class PostsService {
     return true;
   }
 
-
   @HasRole([UserRole.admin, UserRole.moderator])
   @Validate(UpdatePostDto)
   async updatePost(payload: UpdatePostDto, ctx: ServiceContext): Promise<Post> {
