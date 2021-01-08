@@ -51,8 +51,6 @@ export const createUserGithubAuthRouter = (oauth2Config: GithubOAuth2Config): Ro
       }
     }
 
-    console.log(email);
-
     const user = await userService.createOrGetUser({
       fullName: data.name,
       email,
