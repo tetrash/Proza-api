@@ -2,7 +2,7 @@ import { index, modelOptions, prop } from '@typegoose/typegoose';
 import { DataMapper } from '../../common/interfaces/dataMapper';
 import { User } from '../domain/user';
 
-@index({ openid: 1, openidSource: 1 }, { unique: true })
+@index({ openid: 1, openidSource: 1 }, { unique: true, partialFilterExpression: { $exists: true } })
 @modelOptions({ schemaOptions: { collection: 'users' } })
 export class UserEntity {
   constructor(payload: UserEntity) {

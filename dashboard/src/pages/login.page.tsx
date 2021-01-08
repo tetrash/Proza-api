@@ -24,6 +24,10 @@ export default function LoginPage() {
     window.location.assign(`${config.backendDomain}/auth/linkedin?redirectTo=${config.dashboardDomain}`);
   };
 
+  const handleTestLogin = (user: string) => {
+    window.location.assign(`${config.backendDomain}/auth/test?redirectTo=${config.dashboardDomain}&user=${user}`);
+  };
+
   return (
     <Grid container spacing={0} direction="column" alignItems="center" justify="center" style={{ minHeight: '100vh' }}>
       <Typography variant="h5">Proza admin dashboard - login</Typography>
@@ -54,6 +58,30 @@ export default function LoginPage() {
       <SocialLoginButton
         onClick={handleOidcLogin}
         buttonText="Login with OIDC"
+        backgroundColor="white"
+        color="#333333"
+        icon={<LockOpenIcon />}
+        width="300px"
+      />
+      <SocialLoginButton
+        onClick={() => handleTestLogin('user')}
+        buttonText="Test login as user"
+        backgroundColor="white"
+        color="#333333"
+        icon={<LockOpenIcon />}
+        width="300px"
+      />
+      <SocialLoginButton
+        onClick={() => handleTestLogin('moderator')}
+        buttonText="Test login as moderator"
+        backgroundColor="white"
+        color="#333333"
+        icon={<LockOpenIcon />}
+        width="300px"
+      />
+      <SocialLoginButton
+        onClick={() => handleTestLogin('admin')}
+        buttonText="Test login as admin"
         backgroundColor="white"
         color="#333333"
         icon={<LockOpenIcon />}

@@ -51,4 +51,5 @@ export interface UserRepository {
   getUser(userId: string): Promise<User>;
   getUserByOpenid(openid: string, openidSource: string): Promise<User | null>;
   createUser(payload: User): Promise<void>;
+  createOrReplaceUser(payload: User): Promise<void>;
 }

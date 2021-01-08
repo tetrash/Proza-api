@@ -125,4 +125,54 @@ describe('users service', () => {
       expect(userRepo.getUser).toHaveBeenCalledWith('id');
     });
   });
+
+  describe('createOrReplaceUser', () => {
+    it('should create new user', async () => {
+      const payload = {
+        fullName: 'test',
+        role: UserRole.user,
+        username: 'test',
+        openid: 'openid',
+        openidSource: 'openidSource',
+      };
+      const id = 'id';
+
+      userRepo.createOrReplaceUser.mockResolvedValue();
+      userRepo.generateId.mockReturnValue(id);
+
+      const result = service.createOrReplaceUser(payload);
+
+      await expect(result).resolves.toMatchObject({ ...payload, id });
+      expect(userRepo.createOrReplaceUser).toHaveBeenCalledWith({
+        ...payload,
+        id,
+        updatedAt: expect.any(Date),
+        createdAt: expect.any(Date),
+      });
+      expect(userRepo.generateId).toHaveBeenCalled();
+    });
+
+    it('should create new user with id', async () => {
+      const payload = {
+        id: 'id',
+        fullName: 'test',
+        role: UserRole.user,
+        username: 'test',
+        openid: 'openid',
+        openidSource: 'openidSource',
+      };
+
+      userRepo.createOrReplaceUser.mockResolvedValue();
+
+      const result = service.createOrReplaceUser(payload);
+
+      await expect(result).resolves.toMatchObject(payload);
+      expect(userRepo.createOrReplaceUser).toHaveBeenCalledWith({
+        ...payload,
+        updatedAt: expect.any(Date),
+        createdAt: expect.any(Date),
+      });
+      expect(userRepo.generateId).not.toHaveBeenCalled();
+    });
+  });
 });
