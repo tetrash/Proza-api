@@ -1,12 +1,16 @@
 import express from 'express';
 import { ApolloError, ApolloServer, IResolvers } from 'apollo-server-express';
 import { addResolversToSchema, GraphQLFileLoader, loadSchemaSync, mergeResolvers } from 'graphql-tools';
-import { Config } from '../config/config';
-import { Logger } from '../logger/logger';
+import * as swaggerUi from 'swagger-ui-express';
+import * as path from 'path';
+import * as glob from 'glob';
+import * as yaml from 'yamljs';
 import cors from 'cors';
 import helmet from 'helmet';
 import * as bodyParser from 'body-parser';
 import session, { Session } from 'express-session';
+import { Config } from '../config/config';
+import { Logger } from '../logger/logger';
 import { postsResolver } from '../../posts/ports/graphql';
 import { User } from '../../users/domain/user';
 import { createUserGithubAuthRouter } from '../../users/ports/githubAuthExpress';
@@ -164,6 +168,17 @@ export class GraphqlServer {
     );
   }
 
+  private setupSwagger(): void {
+    const docsPaths = glob.sync(path.resolve(__dirname, '../../../api/openapi/*.yaml'));
+    docsPaths.forEach((docPath) => {
+      const swaggerDocument = yaml.load(docPath);
+      const name = path.basename(docPath).replace('.yaml', '');
+      const url = `/docs/${name}`;
+      this.app.use(url, swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+      this.logger.info(`Loaded swagger page "${name}" ${this.config.domain}${url}/`);
+    });
+  }
+
   async start(): Promise<void> {
     this.app.use(
       cors({
@@ -201,6 +216,10 @@ export class GraphqlServer {
     this.setupLogout();
 
     this.gqlServer.applyMiddleware({ app: this.app, cors: { credentials: true, origin: true } });
+
+    if (this.config.isDevEnv) {
+      this.setupSwagger();
+    }
 
     this.app.use('**', (req, res, next) => next(new NotFoundError("Page doesn't exist")));
 
