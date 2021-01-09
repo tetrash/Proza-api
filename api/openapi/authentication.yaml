@@ -1,0 +1,162 @@
+openapi: "3.0.3"
+info:
+  title: Proza authentication API
+  description: Authenticate users
+  version: "0.0.1"
+servers:
+  - url: '{protocol}://{host}/auth'
+    variables:
+      host:
+        default: 'localhost:4000'
+      protocol:
+        enum:
+          - 'http'
+          - 'https'
+        default: 'http'
+paths:
+  /logout:
+    get:
+      description: Deletes user session
+      parameters:
+        - name: redirectTo
+          in: query
+          required: false
+      responses:
+        200:
+          description: User successfully logged out
+        302:
+          description: Redirects to specified url
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+  /github:
+    get:
+      description: Login with github
+      parameters:
+        - name: redirectTo
+          in: query
+          required: false
+      responses:
+        302:
+          description: Redirects to login page
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+  /github/callback:
+    get:
+      description: Callback route for github identity provider
+      responses:
+        200:
+          description: User successfully logged in
+        302:
+          description: Redirects to specified url
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+  /oidc:
+    get:
+      description: Login with oidc
+      parameters:
+        - name: redirectTo
+          in: query
+          required: false
+      responses:
+        302:
+          description: Redirects to login page
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+  /oidc/callback:
+    get:
+      description: Callback route for oidc identity provider
+      responses:
+        200:
+          description: User successfully logged in
+        302:
+          description: Redirects to specified url
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+  /google:
+    get:
+      description: Login with google
+      parameters:
+        - name: redirectTo
+          in: query
+          required: false
+      responses:
+        302:
+          description: Redirects to login page
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+  /google/callback:
+    get:
+      description: Callback route for google identity provider
+      responses:
+        200:
+          description: User successfully logged in
+        302:
+          description: Redirects to specified url
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+  /linkedin:
+    get:
+      description: Login with linkedin
+      parameters:
+        - name: redirectTo
+          in: query
+          required: false
+      responses:
+        302:
+          description: Redirects to login page
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+  /linkedin/callback:
+    get:
+      description: Callback route for linkedin identity provider
+      responses:
+        200:
+          description: User successfully logged in
+        302:
+          description: Redirects to specified url
+        400:
+          description: Bad request
+        404:
+          description: Not Found
+  /test:
+    get:
+      description: Login using test users
+      parameters:
+        - name: redirectTo
+          in: query
+          required: false
+        - name: user
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - user
+              - admin
+              - moderator
+            default: user
+      responses:
+        200:
+          description: User successfully logged in
+        302:
+          description: Redirects to specified url
+        400:
+          description: Bad request
+        404:
+          description: Not Found
