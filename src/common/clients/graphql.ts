@@ -13,7 +13,7 @@ import { createUserGithubAuthRouter } from '../../users/ports/githubAuthExpress'
 import { usersResolver } from '../../users/ports/graphql';
 import { Connection } from 'mongoose';
 import mongoStoreFactory from 'connect-mongo';
-import { CustomError, ErrorType, InternalError } from '../errors/errors';
+import { CustomError, ErrorType, InternalError, NotFoundError } from '../errors/errors';
 import { createAuthRouter } from '../../users/ports/authExpress';
 import { createUserOidcAuthRouter } from '../../users/ports/oidcAuthExpress';
 import { createUserGoogleAuthRouter } from '../../users/ports/googleAuthExpress';
@@ -201,6 +201,26 @@ export class GraphqlServer {
     this.setupLogout();
 
     this.gqlServer.applyMiddleware({ app: this.app, cors: { credentials: true, origin: true } });
+
+    this.app.use('**', (req, res, next) => next(new NotFoundError("Page doesn't exist")));
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.app.use((err, req, res, next) => {
+      const error: CustomError = !!err.type ? err : new InternalError(err);
+
+      switch (error.type) {
+        case ErrorType.IncorrectInput:
+          this.logger.debug(err);
+          return res.status(400).json({ error: error.type, details: error.message });
+        case ErrorType.NotFound:
+          this.logger.debug(err);
+          return res.status(404).json({ error: error.type, details: error.message });
+        default:
+          this.logger.error(err);
+          return res.status(500).json({ error: error.type });
+      }
+    });
 
     this.app.listen(this.config.port, () => {
       this.logger.info(`App is running at port ${this.config.port}`);
