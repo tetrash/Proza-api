@@ -7,7 +7,7 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start:dev": "ENV=dev LOG_LEVEL=debug ts-node-dev --respawn --watch src,api src/index.ts",
+    "start:dev": "PROZA_ENV=dev PROZA_LOG_LEVEL=debug ts-node-dev --respawn --watch src,api src/index.ts",
     "test": "jest",
     "build": "tsc",
     "lint": "eslint",
