@@ -23,6 +23,7 @@ import { createUserOidcAuthRouter } from '../../users/ports/oidcAuthExpress';
 import { createUserGoogleAuthRouter } from '../../users/ports/googleAuthExpress';
 import { createUserLinkedinAuthRouter } from '../../users/ports/linkedinAuthExpress';
 import { createTestAuthRouter } from '../../users/ports/testAuthExpress';
+import { createServerMetadataRoute } from '../../settings/ports/serverMetadata.express';
 
 export interface ApolloContext {
   user?: User;
@@ -179,6 +180,12 @@ export class GraphqlServer {
     });
   }
 
+  private async setupServerApi(): Promise<void> {
+    const route = await createServerMetadataRoute(this.config);
+    this.app.use('/server', route);
+    this.logger.info('Setting up server routes');
+  }
+
   async start(): Promise<void> {
     this.app.use(
       cors({
@@ -220,6 +227,8 @@ export class GraphqlServer {
     if (this.config.isDevEnv) {
       this.setupSwagger();
     }
+
+    await this.setupServerApi();
 
     this.app.use('**', (req, res, next) => next(new NotFoundError("Page doesn't exist")));
 

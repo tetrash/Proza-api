@@ -3,14 +3,7 @@ import { GithubOAuth2Config } from './githubOAuth2Config';
 import { OidcAuthConfig } from './oidcAuthConfig';
 import { GoogleAuthConfig } from './googleAuthConfig';
 import { LinkedinAuthConfig } from './linkedinAuthConfig';
-
-export enum AuthType {
-  github = 'github',
-  oidc = 'oidc',
-  google = 'google',
-  linkedin = 'linkedin',
-  test = 'test',
-}
+import { AuthType } from '../../settings/domain/serverMetadata';
 
 export class AuthConfig {
   @IsEnum(AuthType, {
