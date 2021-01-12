@@ -42,6 +42,7 @@ const resolvers: IResolvers[] = [postsResolver, usersResolver];
 export class GraphqlServer {
   private readonly app = express();
   private readonly gqlServer: ApolloServer;
+  private readonly authPrefixPath = '/auth';
 
   constructor(
     private readonly config: Config,
@@ -98,14 +99,14 @@ export class GraphqlServer {
   }
 
   private setupLogout() {
-    const path = `${this.config.auth.authPrefixPath}`;
+    const path = `${this.authPrefixPath}`;
     this.logger.debug(`Setting auth router at path ${path}`);
     const authRouter = createAuthRouter();
     this.app.use(path, authRouter);
   }
 
   private setupGithubAuth() {
-    const path = `${this.config.auth.authPrefixPath}/github`;
+    const path = `${this.authPrefixPath}/github`;
     this.logger.info('Setting up github oauth2 user authentication');
     this.logger.debug(`Github auth path ${path}`);
     const githubRouter = createUserGithubAuthRouter(this.config.auth.githubAuth);
@@ -113,7 +114,7 @@ export class GraphqlServer {
   }
 
   private async setupOidcAuth() {
-    const path = `${this.config.auth.authPrefixPath}/oidc`;
+    const path = `${this.authPrefixPath}/oidc`;
     this.logger.info('Setting up oidc user authentication');
     this.logger.debug(`Oidc auth path ${path}`);
     const oidcRouter = await createUserOidcAuthRouter(
@@ -124,7 +125,7 @@ export class GraphqlServer {
   }
 
   private async setupGoogleAuth() {
-    const path = `${this.config.auth.authPrefixPath}/google`;
+    const path = `${this.authPrefixPath}/google`;
     this.logger.info('Setting up google user authentication');
     this.logger.debug(`Google auth path ${path}`);
     const oidcRouter = await createUserGoogleAuthRouter(
@@ -135,7 +136,7 @@ export class GraphqlServer {
   }
 
   private async setupLinkedinAuth() {
-    const path = `${this.config.auth.authPrefixPath}/linkedin`;
+    const path = `${this.authPrefixPath}/linkedin`;
     this.logger.info('Setting up linkedin user authentication');
     this.logger.debug(`Linkedin auth path ${path}`);
     const router = await createUserLinkedinAuthRouter(
@@ -146,7 +147,7 @@ export class GraphqlServer {
   }
 
   private async setupTestAuth() {
-    const path = `${this.config.auth.authPrefixPath}/test`;
+    const path = `${this.authPrefixPath}/test`;
     this.logger.info('Setting up test user authentication');
     this.logger.debug(`Test auth path ${path}`);
     const router = await createTestAuthRouter();

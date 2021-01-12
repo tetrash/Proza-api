@@ -1,4 +1,4 @@
-import { IsArray, IsIn, IsInt, IsString, IsUrl, ValidateNested } from 'class-validator';
+import { IsArray, IsIn, IsInt, IsUrl, ValidateNested } from 'class-validator';
 import { MongodbConfig } from './mongodbConfig';
 import { AuthConfig } from './authConfig';
 
@@ -11,7 +11,7 @@ export class Config {
   }
 
   @IsInt()
-  port: number = Number(process.env.PORT) || 4000;
+  port: number = Number(process.env.PROZA_PORT) || 4000;
 
   @IsUrl(
     {
@@ -32,7 +32,7 @@ export class Config {
   logLevel: string = process.env.PROZA_LOG_LEVEL || 'http';
 
   @IsIn(availableEnv, { message: `incorrect variable PROZA_ENV, available: ${availableEnv.join(', ')}` })
-  env: string = process.env.PROZA_ENV || 'dev';
+  env: string = process.env.PROZA_ENV || 'prod';
 
   isDevEnv: boolean = this.env === 'dev';
 
@@ -43,9 +43,6 @@ export class Config {
 
   @ValidateNested()
   auth: AuthConfig = new AuthConfig();
-
-  @IsString({ message: 'missing variable PROZA_DASHBOARD_URI' })
-  dashboardUri: string = process.env.PROZA_DASHBOARD_URI || this.domain;
 
   @IsArray()
   corsOrigin: string[] = process.env.PROZA_CORS_ORIGINS ? process.env.PROZA_CORS_ORIGINS.split(' ') : [];
