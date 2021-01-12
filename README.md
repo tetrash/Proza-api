@@ -26,7 +26,7 @@ Open-source blog api.
 
 ### Development:
 ```
-$ docker run -p 27017:27017 -d mongo:4.4.2 # Start local mongodb
+$ docker run -p 27017:27017 -d mongo:4.4.2 # Start local mongodb (optional)
 $ yarn
 $ yarn run start:dev
 ```
@@ -74,5 +74,3 @@ Type: string
 ```
 $ yarn test
 ```
-
-## User authentication

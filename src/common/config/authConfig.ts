@@ -10,7 +10,7 @@ export class AuthConfig {
     each: true,
     message: `incorrect PROZA_AUTH_TYPE variable, available: ${Object.values(AuthType).join(', ')}`,
   })
-  type: AuthType[] | string[] = (process.env.PROZA_AUTH_TYPE || 'test').split(' ');
+  type: AuthType[] | string[] = (process.env.PROZA_AUTH_TYPE || '').split(' ');
 
   @ValidateNested()
   @ValidateIf((obj: AuthConfig) => obj.isGithubAuth)
@@ -40,7 +40,4 @@ export class AuthConfig {
 
   @IsString({ message: 'missing variable PROZA_AUTH_SESSION_SECRET' })
   sessionSecret: string = process.env.PROZA_AUTH_SESSION_SECRET || 'secret';
-
-  @IsString({ message: 'missing variable PROZA_AUTH_PREFIX' })
-  authPrefixPath: string = process.env.PROZA_AUTH_PREFIX || '/auth';
 }
