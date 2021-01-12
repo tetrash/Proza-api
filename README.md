@@ -47,26 +47,7 @@ $ docker run -p 3000:3000 -e PORT=3000 blog:latest
 ## Configuration
 Application is using environment variables to store configs.
 
-### `PORT`
-Type: number
-
-### `LOG_LEVEL`
-Type: debug | info | warn | error | http
-
-### `ENV`
-Type: dev | prod | test
-
-### `MONGODB_URL`
-Type: string
-
-### `MONGODB_DB_NAME`
-Type: string
-
-### `MONGODB_USER`
-Type: string
-
-### `MONGODB_PASSWORD`
-Type: string
+[📄 List of environment variables](https://github.com/tetrash/Proza-api/wiki/Configuration).
 
 ## Testing
 
