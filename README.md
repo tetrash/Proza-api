@@ -49,6 +49,9 @@ Application is using environment variables to store configs.
 
 [📄 List of environment variables](https://github.com/tetrash/Proza-api/wiki/Configuration).
 
+## Authentication
+[Check the wiki page](https://github.com/tetrash/Proza-api/wiki/Authentication)
+
 ## Testing
 
 **Unit tests:**
