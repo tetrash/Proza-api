@@ -12,6 +12,7 @@ Open-source blog api.
 .
 ├── .github         # Github actions CI configs
 ├── api             # Api Definitions
+├── examples        # Configuration examples
 ├── src             # Source code
 │
 └── README.md 
