@@ -9,6 +9,7 @@ type Post {
   author: PostAuthor
   title: String!
   body: String!
+  commentsCount: Int!
   updatedAt: String!
   createdAt: String!
 }

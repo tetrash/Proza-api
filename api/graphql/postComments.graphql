@@ -1,0 +1,58 @@
+type PostCommentAuthor {
+  id: String
+  username: String
+}
+
+type PostComment {
+  id: ID!
+  author: PostCommentAuthor
+  post: String
+  commentRef: String
+  body: String!
+  responses: [PostComment]
+  responsesCount: Int
+  upVotes: Int
+  downVotes: Int
+  updatedAt: String!
+  createdAt: String!
+}
+
+input addPostCommentInput {
+  body: String!
+  postId: String!
+}
+
+input respondToPostCommentInput {
+  body: String!
+  postCommentId: String!
+}
+
+input voteForPostCommentInput {
+  postCommentId: String!
+  value: Int!
+}
+
+type PostCommentListResult implements Pagination {
+  items: [PostComment]
+  nextPage: Int
+  previousPage: Int
+  totalItems: Int!
+  totalPages: Int!
+  page: Int!
+}
+
+input PostCommentListPaginationInput {
+  limit: Int
+  page: Int
+}
+
+type Query {
+  listPostComments(postId: String!, pagination: PostCommentListPaginationInput): PostCommentListResult
+  getCommentResponses(commentId: String!): [PostComment]
+}
+
+type Mutation {
+  addPostComment(comment: addPostCommentInput!): PostComment
+  respondToPostComment(comment: respondToPostCommentInput!): PostComment
+  voteForPostComment(vote: voteForPostCommentInput!): Boolean
+}

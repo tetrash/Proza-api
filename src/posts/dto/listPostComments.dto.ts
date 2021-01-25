@@ -1,7 +1,8 @@
 import { IsNumber, IsPositive, Max } from 'class-validator';
+import { ListPostCommentsQuery } from '../domain/repository';
 
-export class ListPostsDto {
-  constructor(obj: Partial<ListPostsDto>) {
+export class ListPostCommentsDto {
+  constructor(obj: Partial<ListPostCommentsDto>) {
     Object.assign(this, obj);
   }
 
@@ -12,4 +13,6 @@ export class ListPostsDto {
   @IsNumber()
   @IsPositive()
   page: number = 1;
+
+  query?: ListPostCommentsQuery;
 }
