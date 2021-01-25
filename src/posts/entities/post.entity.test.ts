@@ -1,9 +1,10 @@
 import { newPost } from '../domain/post';
 import { PostEntity, PostEntityMapper } from './post.entity';
+import { PostCommentEntityMapper } from './postComment.entity';
 
 describe('post entity', () => {
   describe('PostEntityMapper', () => {
-    const mapper = new PostEntityMapper();
+    const mapper = new PostEntityMapper(new PostCommentEntityMapper());
 
     it('should map domain object to entity', () => {
       const result = newPost({ id: 'id' });

@@ -9,6 +9,8 @@ describe('post comment domain', () => {
         ...payload,
         status: expect.any(String),
         upVotes: expect.any(Number),
+        commentRef: undefined,
+        responsesCount: expect.any(Number),
         downVotes: expect.any(Number),
         responses: expect.any(Array),
         createdAt: expect.any(Date),

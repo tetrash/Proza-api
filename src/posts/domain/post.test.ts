@@ -9,6 +9,7 @@ describe('post domain', () => {
         id: 'id',
         title: 'title',
         body: 'body',
+        commentsCount: expect.any(Number),
         author: 'author',
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),
