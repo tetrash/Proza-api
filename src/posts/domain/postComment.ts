@@ -28,7 +28,7 @@ export function newPostComment(payload: Partial<PostComment>): PostComment {
   }
 
   if (!payload.author) {
-    throw new IncorrectInputError('Comment response is missing author');
+    throw new IncorrectInputError('Comment is missing author');
   }
 
   if (!payload.body || payload.body === '') {
