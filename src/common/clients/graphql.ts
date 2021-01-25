@@ -11,13 +11,13 @@ import * as bodyParser from 'body-parser';
 import session, { Session } from 'express-session';
 import { Config } from '../config/config';
 import { Logger } from '../logger/logger';
-import { postsResolver } from '../../posts/ports/graphql';
+import { postCommentResolver, postsResolver } from '../../posts/ports/graphql';
 import { User } from '../../users/domain/user';
 import { createUserGithubAuthRouter } from '../../users/ports/githubAuthExpress';
 import { usersResolver } from '../../users/ports/graphql';
 import { Connection } from 'mongoose';
 import mongoStoreFactory from 'connect-mongo';
-import { CustomError, ErrorType, InternalError, NotFoundError } from '../errors/errors';
+import { CustomError, ErrorType, IncorrectInputError, InternalError, NotFoundError } from '../errors/errors';
 import { createAuthRouter } from '../../users/ports/authExpress';
 import { createUserOidcAuthRouter } from '../../users/ports/oidcAuthExpress';
 import { createUserGoogleAuthRouter } from '../../users/ports/googleAuthExpress';
@@ -37,7 +37,7 @@ declare module 'express-session' {
   }
 }
 
-const resolvers: IResolvers[] = [postsResolver, usersResolver];
+const resolvers: IResolvers[] = [postsResolver, usersResolver, postCommentResolver];
 
 export class GraphqlServer {
   private readonly app = express();
@@ -75,14 +75,17 @@ export class GraphqlServer {
       },
       formatError: (error) => {
         const originalErr = error.originalError as Error | CustomError;
-        let err: CustomError = new InternalError(originalErr.message);
+        let err: CustomError =
+          error.name === 'ValidationError'
+            ? new IncorrectInputError(error.message)
+            : new InternalError(originalErr.message);
 
         if (originalErr instanceof CustomError && originalErr.type) {
           err = originalErr;
         }
 
         if (err.type === ErrorType.Internal) {
-          this.logger.error(err.stack || err.message);
+          this.logger.error([originalErr, originalErr.stack].join('\n'));
         } else {
           this.logger.debug(err.stack || err.message);
         }

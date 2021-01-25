@@ -1,11 +1,14 @@
 import { IncorrectInputError } from '../../common/errors/errors';
 import { PostAuthor } from './postAuthor';
+import { PostComment } from './postComment';
 
 export interface Post {
   id: string;
   author: PostAuthor | string;
   title: string;
   body: string;
+  comments?: PostComment[];
+  commentsCount: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,6 +23,7 @@ export function newPost(payload: Partial<Post>): Post {
     author: payload.author || '',
     title: payload.title || 'Title',
     body: payload.body || '',
+    commentsCount: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
   };

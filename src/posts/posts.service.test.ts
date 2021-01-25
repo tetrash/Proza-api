@@ -13,6 +13,7 @@ describe('posts service', () => {
     title: 'testTitle',
     body: 'testBody',
     author: 'testOwner',
+    commentsCount: 0,
     updatedAt: new Date(),
     createdAt: new Date(),
   };
@@ -41,7 +42,7 @@ describe('posts service', () => {
         totalItems: 1,
       };
       postsRepo.listPosts.mockResolvedValue(expected);
-      const result = service.listPosts({ limit: 2 });
+      const result = service.listPosts({ limit: 2, page: 1 });
       await expect(result).resolves.toEqual(expected);
     });
   });
